@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.text.format.Time;
 import android.util.Log;
 
 import com.example.android.sunshine.app.MainActivity;
@@ -71,7 +70,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize);
     }
 
-    @Override
+    /**
+     * Methode qui va nous permettre d'utiliser l'api sitra
+     * @param account
+     * @param extras
+     * @param authority
+     * @param provider
+     * @param syncResult
+     */
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting sync");
         String locationQuery = Utility.getPreferredLocation(getContext());
@@ -89,30 +95,31 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         int numDays = 14;
 
         try {
-            // Construct the URL for the OpenWeatherMap query
+            // Construct the URL for the sitra query
             // Possible parameters are avaiable at OWM's forecast API page, at
-            // http://openweathermap.org/API#forecast
-            final String FORECAST_BASE_URL =
-                    "http://api.openweathermap.org/data/2.5/forecast/daily?";
-            final String QUERY_PARAM = "q";
-            final String FORMAT_PARAM = "mode";
-            final String UNITS_PARAM = "units";
-            final String DAYS_PARAM = "cnt";
+            // http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques?query={"projetId":"1143","apiKey":"m4VH2Zee","criteresQuery":"type:RESTAURATION","order":"DISTANCE","center":{"type":"Point","coordinates":%5B5.768291999999974,45.193761%5D},"radius":5000}
 
-            Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                    .appendQueryParameter(QUERY_PARAM, locationQuery)
-                    .appendQueryParameter(FORMAT_PARAM, format)
-                    .appendQueryParameter(UNITS_PARAM, units)
-                    .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
-                    .build();
+            final String COORDONNE_PARAM = "5.768291999999974,45.193761";
+            final String RAYON_PARAM = "5000";
+            final String BASE_URL = "http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques?query={\"projetId\":\"1143\",\"apiKey\":\"m4VH2Zee\",\"criteresQuery\":\"type:RESTAURATION\",\"order\":\"DISTANCE\",\"center\":{\"type\":\"Point\",\"coordinates\":[5.768291999999974,45.193761]},\"radius\":5000}";
 
-            URL url = new URL(builtUri.toString());
+//            Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+//                    .appendQueryParameter(COORDONNE_PARAM, locationQuery)
+//                    .appendQueryParameter(RAYON_PARAM, format)
+//                    .appendQueryParameter(UNITS_PARAM, units)
+//                    .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+//                    .build();
 
+//            URL url = new URL(builtUri.toString());
+
+            URL url = new URL(BASE_URL);
+            System.out.println("L'url est :\n"+url);
+            System.out.println("On effectue la connection");
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
-
+            System.out.println("On est connecte");
             // Read the input stream into a String
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
@@ -135,7 +142,11 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 return;
             }
             forecastJsonStr = buffer.toString();
+            /*appele de la fonction qui recupere les mise a jour */
+            System.out.println("Avant appelle fonction !");
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
+            System.out.println("Apres appelle fonction !");
+
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attempting
@@ -169,6 +180,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                                         String locationSetting)
             throws JSONException {
 
+        System.out.println("On est dans la fonction");
+
         // Now we have a String representing the complete forecast in JSON Format.
         // Fortunately parsing is easy:  constructor takes the JSON string and converts it
         // into an Object hierarchy for us.
@@ -176,139 +189,133 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         // These are the names of the JSON objects that need to be extracted.
 
         // Location information
-        final String OWM_CITY = "city";
-        final String OWM_CITY_NAME = "name";
-        final String OWM_COORD = "coord";
-
-        // Location coordinate
-        final String OWM_LATITUDE = "lat";
-        final String OWM_LONGITUDE = "lon";
-
-        // Weather information.  Each day's forecast info is an element of the "list" array.
-        final String OWM_LIST = "list";
-
-        final String OWM_PRESSURE = "pressure";
-        final String OWM_HUMIDITY = "humidity";
-        final String OWM_WINDSPEED = "speed";
-        final String OWM_WIND_DIRECTION = "deg";
-
-        // All temperatures are children of the "temp" object.
-        final String OWM_TEMPERATURE = "temp";
-        final String OWM_MAX = "max";
-        final String OWM_MIN = "min";
-
-        final String OWM_WEATHER = "weather";
-        final String OWM_DESCRIPTION = "main";
-        final String OWM_WEATHER_ID = "id";
+//        final String OWM_CITY = "city";
+//        final String OWM_CITY_NAME = "name";
+//        final String OWM_COORD = "coord";
+//
+//        // Location coordinate
+//        final String OWM_LATITUDE = "lat";
+//        final String OWM_LONGITUDE = "lon";
+//
+//        // Weather information.  Each day's forecast info is an element of the "list" array.
+//        final String RESTAURANT_LIST = "list";
+//
+//        final String OWM_PRESSURE = "pressure";
+//        final String OWM_HUMIDITY = "humidity";
+//        final String OWM_WINDSPEED = "speed";
+//        final String OWM_WIND_DIRECTION = "deg";
+//
+//        // All temperatures are children of the "temp" object.
+//        final String OWM_TEMPERATURE = "temp";
+//        final String OWM_MAX = "max";
+//        final String OWM_MIN = "min";
+//
+//        final String OWM_WEATHER = "weather";
+//        final String OWM_DESCRIPTION = "main";
+        final String RESTAURANT_LIST = "objetsTouristiques";
+        final String RESTAURANT_ID = "id";
+        final String NOM = "nom";
+        final String LABEL = "libelleFr";
+        final String INFORMATION = "informations";
+        final String PRESENTATION = "informations";
 
         try {
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
-            JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
+            JSONArray restaurantArray = forecastJson.getJSONArray(RESTAURANT_LIST);
 
-            JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);
-            String cityName = cityJson.getString(OWM_CITY_NAME);
-
-            JSONObject cityCoord = cityJson.getJSONObject(OWM_COORD);
-            double cityLatitude = cityCoord.getDouble(OWM_LATITUDE);
-            double cityLongitude = cityCoord.getDouble(OWM_LONGITUDE);
-
-            long locationId = addLocation(locationSetting, cityName, cityLatitude, cityLongitude);
+//            JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);
+//            String cityName = cityJson.getString(OWM_CITY_NAME);
+//
+//            JSONObject cityCoord = cityJson.getJSONObject(OWM_COORD);
+//            double cityLatitude = cityCoord.getDouble(OWM_LATITUDE);
+//            double cityLongitude = cityCoord.getDouble(OWM_LONGITUDE);
+//
+//            long locationId = addLocation(locationSetting, cityName, cityLatitude, cityLongitude);
 
             // Insert the new weather information into the database
-            Vector<ContentValues> cVVector = new Vector<ContentValues>(weatherArray.length());
+            Vector<ContentValues> cVVector = new Vector<ContentValues>(restaurantArray.length());
 
-            // OWM returns daily forecasts based upon the local time of the city that is being
-            // asked for, which means that we need to know the GMT offset to translate this data
-            // properly.
 
-            // Since this data is also sent in-order and the first day is always the
-            // current day, we're going to take advantage of that to get a nice
-            // normalized UTC date for all of our weather.
 
-            Time dayTime = new Time();
-            dayTime.setToNow();
-
-            // we start at the day returned by local time. Otherwise this is a mess.
-            int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
-
-            // now we work exclusively in UTC
-            dayTime = new Time();
-
-            for(int i = 0; i < weatherArray.length(); i++) {
+//            pour tout les restaurants on recupere le nom, l'adresse , le descriptif et le telephone du resto'
+            for(int i = 0; i < restaurantArray.length(); i++)
+            {
                 // These are the values that will be collected.
-                long dateTime;
-                double pressure;
-                int humidity;
-                double windSpeed;
-                double windDirection;
-
-                double high;
-                double low;
+                String nomRestaurant;
+                JSONObject nomRestoTmp;
+                String numeroTelephone;
+                String siteWeb;
 
                 String description;
-                int weatherId;
+                int idRestaurant;
 
-                // Get the JSON object representing the day
-                JSONObject dayForecast = weatherArray.getJSONObject(i);
+                // Get the JSON object representing the restaurant
+                JSONObject tabResto = restaurantArray.getJSONObject(i);
 
-                // Cheating to convert this to UTC time, which is what we want anyhow
-                dateTime = dayTime.setJulianDay(julianStartDay+i);
+                //On recupere les JSONobjet "nom" et on recupere le contenu
+                nomRestoTmp = tabResto.getJSONObject("nom");
+                nomRestaurant = nomRestoTmp.getString(LABEL);
 
-                pressure = dayForecast.getDouble(OWM_PRESSURE);
-                humidity = dayForecast.getInt(OWM_HUMIDITY);
-                windSpeed = dayForecast.getDouble(OWM_WINDSPEED);
-                windDirection = dayForecast.getDouble(OWM_WIND_DIRECTION);
+
+                System.out.println("Le nom du restaurant est : "+nomRestaurant);
+
+
+//                pressure = tabResto.getDouble(OWM_PRESSURE);
+//                humidity = tabResto.getInt(OWM_HUMIDITY);
+//                windSpeed = tabResto.getDouble(OWM_WINDSPEED);
+//                windDirection = tabResto.getDouble(OWM_WIND_DIRECTION);
 
                 // Description is in a child array called "weather", which is 1 element long.
                 // That element also contains a weather code.
-                JSONObject weatherObject =
-                        dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
-                description = weatherObject.getString(OWM_DESCRIPTION);
-                weatherId = weatherObject.getInt(OWM_WEATHER_ID);
+//                JSONObject weatherObject =
+//                        tabResto.getJSONArray(OWM_WEATHER).getJSONObject(0);
+//                description = weatherObject.getString(OWM_DESCRIPTION);
+//                weatherId = weatherObject.getInt(RESTAURANT_ID);
+//
+//                // Temperatures are in a child object called "temp".  Try not to name variables
+//                // "temp" when working with temperature.  It confuses everybody.
+//                JSONObject temperatureObject = tabResto.getJSONObject(OWM_TEMPERATURE);
+//                high = temperatureObject.getDouble(OWM_MAX);
+//                low = temperatureObject.getDouble(OWM_MIN);
+//
+//                ContentValues weatherValues = new ContentValues();
+//
+//                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY, locationId);
+//                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DATE, dateTime);
+//                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_HUMIDITY, humidity);
+//                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_PRESSURE, pressure);
+//                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED, windSpeed);
+//                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DEGREES, windDirection);
+//                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP, high);
+//                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP, low);
+//                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC, description);
+//                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID, weatherId);
 
-                // Temperatures are in a child object called "temp".  Try not to name variables
-                // "temp" when working with temperature.  It confuses everybody.
-                JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
-                high = temperatureObject.getDouble(OWM_MAX);
-                low = temperatureObject.getDouble(OWM_MIN);
-
-                ContentValues weatherValues = new ContentValues();
-
-                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY, locationId);
-                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DATE, dateTime);
-                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_HUMIDITY, humidity);
-                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_PRESSURE, pressure);
-                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED, windSpeed);
-                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DEGREES, windDirection);
-                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP, high);
-                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP, low);
-                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC, description);
-                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID, weatherId);
-
-                cVVector.add(weatherValues);
+//                cVVector.add(weatherValues);
             }
-
-            int inserted = 0;
-            // add to database
-            if ( cVVector.size() > 0 ) {
-                ContentValues[] cvArray = new ContentValues[cVVector.size()];
-                cVVector.toArray(cvArray);
-                getContext().getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, cvArray);
-
-                // delete old data so we don't build up an endless history
-                getContext().getContentResolver().delete(WeatherContract.WeatherEntry.CONTENT_URI,
-                        WeatherContract.WeatherEntry.COLUMN_DATE + " <= ?",
-                        new String[] {Long.toString(dayTime.setJulianDay(julianStartDay-1))});
-
-                notifyWeather();
-            }
-
-            Log.d(LOG_TAG, "Sync Complete. " + cVVector.size() + " Inserted");
+//
+//            int inserted = 0;
+//            // add to database
+//            if ( cVVector.size() > 0 ) {
+//                ContentValues[] cvArray = new ContentValues[cVVector.size()];
+//                cVVector.toArray(cvArray);
+//                getContext().getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, cvArray);
+//
+//                // delete old data so we don't build up an endless history
+//                getContext().getContentResolver().delete(WeatherContract.WeatherEntry.CONTENT_URI,
+//                        WeatherContract.WeatherEntry.COLUMN_DATE + " <= ?",
+//                        new String[] {Long.toString(dayTime.setJulianDay(julianStartDay-1))});
+//
+//                notifyWeather();
+//            }
+//
+//            Log.d(LOG_TAG, "Sync Complete. " + cVVector.size() + " Inserted");
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
+        System.out.println("On sort de la fonction");
     }
 
     private void notifyWeather() {
