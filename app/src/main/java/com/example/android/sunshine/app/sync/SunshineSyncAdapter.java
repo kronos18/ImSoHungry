@@ -213,11 +213,21 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 //        final String OWM_WEATHER = "weather";
 //        final String OWM_DESCRIPTION = "main";
         final String RESTAURANT_LIST = "objetsTouristiques";
+        final String ILLUSTRATION_LIST = "illustrations";
+        final String COMMUNICATION_LIST = "moyensCommunication";
         final String RESTAURANT_ID = "id";
         final String NOM = "nom";
-        final String LABEL = "libelleFr";
+        final String LABEL_LIBELLE = "libelleFr";
+        final String LABEL_ADRESSE = "adresse1";
+        final String LABEL_CODEPOSTAL = "codePostal";
+        final String LABEL_URL_LIST_IMG = "urlListe";
+        final String LABEL_URL_FICHE_IMG = "urlFiche";
         final String INFORMATION = "informations";
         final String PRESENTATION = "informations";
+        final String DESCRIPTIF = "descriptifCourt";
+        final String LOCALISATION = "localisation";
+        final String ADRESSE = "adresse";
+        final String GEOLOCALISATION = "geolocalisation";
 
         try {
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
@@ -254,7 +264,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 //On recupere les JSONobjet "nom" et on recupere le contenu
                 nomRestoTmp = tabResto.getJSONObject("nom");
-                nomRestaurant = nomRestoTmp.getString(LABEL);
+                nomRestaurant = nomRestoTmp.getString(LABEL_LIBELLE);
 
 
                 System.out.println("Le nom du restaurant est : "+nomRestaurant);
