@@ -199,8 +199,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             Cursor c = mForecastAdapter.getCursor();
             if ( null != c ) {
                 c.moveToPosition(0);
+
+                //Détermination des latitudes et longitudes
                 String posLat = c.getString(COL_COORD_LAT);
                 String posLong = c.getString(COL_COORD_LONG);
+
+                //Création de l'objet de "géoLocalisation", qui determinera la position dans l'activity MAP
                 Uri geoLocation = Uri.parse("geo:" + posLat + "," + posLong);
 
                 Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -212,7 +216,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     Log.d(LOG_TAG, "Couldn't call " + geoLocation.toString() + ", no receiving apps installed!");
                 }
             }
-
         }
     }
 
