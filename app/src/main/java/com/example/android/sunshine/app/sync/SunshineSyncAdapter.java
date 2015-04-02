@@ -144,7 +144,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             forecastJsonStr = buffer.toString();
             /*appele de la fonction qui recupere les mise a jour */
             System.out.println("Avant appelle fonction !");
-            getWeatherDataFromJson(forecastJsonStr, locationQuery);
+            getRestaurantDataFromJson(forecastJsonStr, locationQuery);
             System.out.println("Apres appelle fonction !");
 
         } catch (IOException e) {
@@ -176,8 +176,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    private void getWeatherDataFromJson(String forecastJsonStr,
-                                        String locationSetting)
+    private void getRestaurantDataFromJson(String forecastJsonStr,
+                                           String locationSetting)
             throws JSONException {
 
         System.out.println("On est dans la fonction");
@@ -217,13 +217,16 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         final String COMMUNICATION_LIST = "moyensCommunication";
         final String RESTAURANT_ID = "id";
         final String NOM = "nom";
+        final String TYPE = "type";
+        final String COORDONNEES = "coordonnees";
         final String LABEL_LIBELLE = "libelleFr";
+        final String LABEL_FR = "fr";
         final String LABEL_ADRESSE = "adresse1";
         final String LABEL_CODEPOSTAL = "codePostal";
         final String LABEL_URL_LIST_IMG = "urlListe";
         final String LABEL_URL_FICHE_IMG = "urlFiche";
         final String INFORMATION = "informations";
-        final String PRESENTATION = "informations";
+        final String PRESENTATION = "presentation";
         final String DESCRIPTIF = "descriptifCourt";
         final String LOCALISATION = "localisation";
         final String ADRESSE = "adresse";
@@ -252,7 +255,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             {
                 // These are the values that will be collected.
                 String nomRestaurant;
-                JSONObject nomRestoTmp;
                 String numeroTelephone;
                 String siteWeb;
 
@@ -261,15 +263,55 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 // Get the JSON object representing the restaurant
                 JSONObject tabResto = restaurantArray.getJSONObject(i);
+                JSONObject nomRestoTmp;
 
                 //On recupere les JSONobjet "nom" et on recupere le contenu
                 nomRestoTmp = tabResto.getJSONObject("nom");
                 nomRestaurant = nomRestoTmp.getString(LABEL_LIBELLE);
 
+                //On recupere les JSONobjet "nom" et on recupere le contenu
+                JSONObject infoTmp = tabResto.getJSONObject(INFORMATION);
+
+//                on recupere la liste des moyens de communication
+                JSONArray moyenCommunicationArray = infoTmp.getJSONArray(COMMUNICATION_LIST);
 
                 System.out.println("Le nom du restaurant est : "+nomRestaurant);
+                System.out.println("Les moyens de communnication sont : ");
+
+                //on recupere les donnees concernants les moyens de communications du restaurant
+                for (int j = 0; j < moyenCommunicationArray.length(); j++)
+                {
+                    //on recupere les moyens de communication
+                    JSONObject moyenCommunicationJSON = moyenCommunicationArray.getJSONObject(j);
+                    JSONObject typeJSON = moyenCommunicationJSON.getJSONObject(TYPE);
+                    JSONObject coordonneesJSON = moyenCommunicationJSON.getJSONObject(COORDONNEES);
+
+                    //On recupere le type de moyen de communication
+                    String typeMoyenCommunication = typeJSON.getString(LABEL_LIBELLE);
+
+                    //On recupere les coordonnees du moyen de communication
+                    String coordonneesMoyenCommunication = coordonneesJSON.getString(LABEL_FR);
+
+                    System.out.println(typeMoyenCommunication +", "+ coordonneesMoyenCommunication+"\n");
+
+                }
 
 
+                //On recupere la description du restaurant
+                String descriptifRestaurant;
+                JSONObject presentationJsonObject = tabResto.getJSONObject(PRESENTATION);
+                int taille = presentationJsonObject.length();
+                boolean existeDescription = taille > 0;
+
+                if (existeDescription)
+                {
+                    //on recupere le decriptif du restaurant
+                    descriptifRestaurant = presentationJsonObject.getJSONObject(DESCRIPTIF).getString(LABEL_LIBELLE);
+
+                    System.out.println(descriptifRestaurant);
+                }
+
+                System.out.println("------------------------------");
 //                pressure = tabResto.getDouble(OWM_PRESSURE);
 //                humidity = tabResto.getInt(OWM_HUMIDITY);
 //                windSpeed = tabResto.getDouble(OWM_WINDSPEED);
@@ -288,7 +330,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 //                high = temperatureObject.getDouble(OWM_MAX);
 //                low = temperatureObject.getDouble(OWM_MIN);
 //
-//                ContentValues weatherValues = new ContentValues();
+                ContentValues weatherValues = new ContentValues();
 //
 //                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY, locationId);
 //                weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DATE, dateTime);
@@ -548,6 +590,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     public static void initializeSyncAdapter(Context context) {
-        getSyncAccount(context);
+        //getSyncAccount(context);
+
+        syncImmediately(context);
+
     }
 }
