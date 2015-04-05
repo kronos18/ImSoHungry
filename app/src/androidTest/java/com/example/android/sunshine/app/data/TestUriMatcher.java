@@ -43,15 +43,15 @@ public class TestUriMatcher extends AndroidTestCase {
         ready to test your UriMatcher.
      */
     public void testUriMatcher() {
-        UriMatcher testMatcher = WeatherProvider.buildUriMatcher();
+        UriMatcher testMatcher = RestaurantProvider.buildUriMatcher();
 
-        assertEquals("Error: The WEATHER URI was matched incorrectly.",
-                testMatcher.match(TEST_WEATHER_DIR), WeatherProvider.WEATHER);
-        assertEquals("Error: The WEATHER WITH LOCATION URI was matched incorrectly.",
-                testMatcher.match(TEST_WEATHER_WITH_LOCATION_DIR), WeatherProvider.WEATHER_WITH_LOCATION);
-        assertEquals("Error: The WEATHER WITH LOCATION AND DATE URI was matched incorrectly.",
-                testMatcher.match(TEST_WEATHER_WITH_LOCATION_AND_DATE_DIR), WeatherProvider.WEATHER_WITH_LOCATION_AND_DATE);
+        assertEquals("Error: The RESTAURANT URI was matched incorrectly.",
+                testMatcher.match(TEST_WEATHER_DIR), RestaurantProvider.RESTAURANT);
+        assertEquals("Error: The RESTAURANT WITH LOCATION URI was matched incorrectly.",
+                testMatcher.match(TEST_WEATHER_WITH_LOCATION_DIR), RestaurantProvider.WEATHER_WITH_LOCATION);
+        assertEquals("Error: The RESTAURANT WITH LOCATION AND DATE URI was matched incorrectly.",
+                testMatcher.match(TEST_WEATHER_WITH_LOCATION_AND_DATE_DIR), RestaurantProvider.WEATHER_WITH_LOCATION_AND_DATE);
         assertEquals("Error: The LOCATION URI was matched incorrectly.",
-                testMatcher.match(TEST_LOCATION_DIR), WeatherProvider.LOCATION);
+                testMatcher.match(TEST_LOCATION_DIR), RestaurantProvider.LOCATION);
     }
 }

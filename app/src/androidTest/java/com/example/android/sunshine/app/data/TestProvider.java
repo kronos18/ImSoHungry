@@ -101,27 +101,27 @@ public class TestProvider extends AndroidTestCase {
 
     /*
         This test checks to make sure that the content provider is registered correctly.
-        Students: Uncomment this test to make sure you've correctly registered the WeatherProvider.
+        Students: Uncomment this test to make sure you've correctly registered the RestaurantProvider.
      */
     public void testProviderRegistry() {
         PackageManager pm = mContext.getPackageManager();
 
         // We define the component name based on the package name from the context and the
-        // WeatherProvider class.
+        // RestaurantProvider class.
         ComponentName componentName = new ComponentName(mContext.getPackageName(),
-                WeatherProvider.class.getName());
+                RestaurantProvider.class.getName());
         try {
             // Fetch the provider info using the component name from the PackageManager
             // This throws an exception if the provider isn't registered.
             ProviderInfo providerInfo = pm.getProviderInfo(componentName, 0);
 
             // Make sure that the registered authority matches the authority from the Contract.
-            assertEquals("Error: WeatherProvider registered with authority: " + providerInfo.authority +
+            assertEquals("Error: RestaurantProvider registered with authority: " + providerInfo.authority +
                     " instead of authority: " + WeatherContract.CONTENT_AUTHORITY,
                     providerInfo.authority, WeatherContract.CONTENT_AUTHORITY);
         } catch (PackageManager.NameNotFoundException e) {
             // I guess the provider isn't registered correctly.
-            assertTrue("Error: WeatherProvider not registered at " + mContext.getPackageName(),
+            assertTrue("Error: RestaurantProvider not registered at " + mContext.getPackageName(),
                     false);
         }
     }
@@ -170,7 +170,7 @@ public class TestProvider extends AndroidTestCase {
      */
     public void testBasicWeatherQuery() {
         // insert our test records into the database
-        WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
+        RestaurantDataBaseHelper dbHelper = new RestaurantDataBaseHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues testValues = TestUtilities.createNorthPoleLocationValues();
@@ -204,7 +204,7 @@ public class TestProvider extends AndroidTestCase {
      */
     public void testBasicLocationQueries() {
         // insert our test records into the database
-        WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
+        RestaurantDataBaseHelper dbHelper = new RestaurantDataBaseHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues testValues = TestUtilities.createNorthPoleLocationValues();
