@@ -27,7 +27,7 @@ import com.example.android.sunshine.app.data.RestaurantContract.RestaurantEntry;
 public class RestaurantDataBaseHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 7;
 
     static final String DATABASE_NAME = "restaurant.db";
 
@@ -52,7 +52,8 @@ public class RestaurantDataBaseHelper extends SQLiteOpenHelper {
 //                RestaurantEntry.COLUMN_ADRESSE+ " VARCHAR2(512) NOT NULL," +
 //                RestaurantEntry.COLUMN_VILLE + " VARCHAR2(128) NOT NULL, " +
 //                RestaurantEntry.COLUMN_CODEPOSTAL + " INTEGER NOT NULL, " +
-                RestaurantEntry.COLUMN_DESCRIPTION + " VARCHAR2(512)  " +
+//                RestaurantEntry.COLUMN_DESCRIPTION + " VARCHAR2(512)  ," +
+                RestaurantEntry.COLUMN_URL_IMG_LIST + " VARCHAR2(512) " +
 //                RestaurantEntry.COLUMN_LATITUDE + " REAL NOT NULL, " +
 //                RestaurantEntry.COLUMN_LONGITUDE + " REAL NOT NULL " +
                 ");";
@@ -83,7 +84,9 @@ public class RestaurantDataBaseHelper extends SQLiteOpenHelper {
      * @param oldVersion
      * @param newVersion
      */
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion)
+    {
+        System.out.println("on est dans onUpgrade");
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
         // Note that this only fires if you change the version number for your database.
@@ -92,5 +95,6 @@ public class RestaurantDataBaseHelper extends SQLiteOpenHelper {
         // should be your top priority before modifying this method.
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + RestaurantEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
+        System.out.println("on sort de onUpgrade");
     }
 }

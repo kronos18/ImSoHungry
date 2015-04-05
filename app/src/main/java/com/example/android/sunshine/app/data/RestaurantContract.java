@@ -84,7 +84,10 @@ public class RestaurantContract {
         public static final String COLUMN_TYPE = "type";
         public static final String COLUMN_LATITUDE = "latitude";
         public static final String COLUMN_LONGITUDE = "longitude";
-        public static final String COLUMN_IMAGE_ID = "image";
+        public static final String COLUMN_URL_IMG_LIST = "urlImgList";
+        public static final String COLUMN_IMAGE_FICHE = "image_Fiche";
+        public static final String COLUMN_IMAGE_DIAPO = "image_Diaporama";
+        public static final String COLUMN_IMAGE = "image";
 
 
         public static Uri buildRestaurantUri(long id)

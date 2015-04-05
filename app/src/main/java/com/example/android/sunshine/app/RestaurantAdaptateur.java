@@ -6,7 +6,10 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.android.sunshine.app.data.DownloadImageTask;
 
 /**
  * {@link RestaurantAdaptateur} exposes a list of weather forecasts
@@ -20,7 +23,7 @@ public class RestaurantAdaptateur extends CursorAdapter {
      */
     public static class ViewHolder {
 
-//        public final ImageView iconView;
+        public final ImageView iconView;
 
         public final TextView descriptionView;
 
@@ -29,7 +32,7 @@ public class RestaurantAdaptateur extends CursorAdapter {
         {
 //            j'affecte tout les elements de ma vue
             System.out.println("On est dans le constructeur ");
-//            iconView = (ImageView) view.findViewById(R.id.list_item_icon);
+            iconView = (ImageView) view.findViewById(R.id.list_item_icon);
 
 //            on recupere là ou on place le restaurant dans le fichier xml
             descriptionView = (TextView) view.findViewById(R.id.list_item_restaurant_textview);
@@ -68,8 +71,15 @@ public class RestaurantAdaptateur extends CursorAdapter {
         System.out.println("ON EST DANS BINDvIEW");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
         System.out.println("apres le get tag");
-//        viewHolder.iconView.setImageResource(Utility.getImageRestaurant(
-//                cursor.getInt(RestaurantFragment.COL_RESTAURANT_ID)));
+
+        String imageUrl = cursor.getString(RestaurantFragment.COL_RESTAURANT_URL_IMG_LIST);
+        System.out.println("L'url de l'image en bdd est : " +imageUrl);
+        DownloadImageTask imageTask;
+        if (imageUrl != null) {
+
+            imageTask = new DownloadImageTask(viewHolder.iconView);
+            imageTask.execute(imageUrl);
+        }
 //        switch (viewType) {
 //            case VIEW_TYPE_TODAY: {
 //                // Get weather icon

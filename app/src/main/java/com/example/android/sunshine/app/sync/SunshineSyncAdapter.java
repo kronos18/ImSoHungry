@@ -34,7 +34,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
 
-public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
+public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
+{
+
+
+
     public final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
     // Interval at which to sync with the weather, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
@@ -201,6 +205,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         final String RESTAURANT_LIST = "objetsTouristiques";
         final String ILLUSTRATION_LIST = "illustrations";
         final String COMMUNICATION_LIST = "moyensCommunication";
+        final String TRADUCTION_FICHIER_LIST = "traductionFichiers";
         final String RESTAURANT_ID = "id";
         final String NOM = "nom";
         final String TYPE = "type";
@@ -211,6 +216,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         final String LABEL_CODEPOSTAL = "codePostal";
         final String LABEL_URL_LIST_IMG = "urlListe";
         final String LABEL_URL_FICHE_IMG = "urlFiche";
+        final String LABEL_URL_DIAPORAMA_IMG = "urlDiaporama";
+        final String LABEL_URL__IMG = "url";
         final String INFORMATION = "informations";
         final String PRESENTATION = "presentation";
         final String DESCRIPTIF = "descriptifCourt";
@@ -246,6 +253,10 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 String siteWeb;
                 idRestaurant=i;
                 String description;
+                String urlListImage = null;
+                String urlFicheImage ;
+                String urlDiaporamaImage;
+                String urlImage;
 
                 // Get the JSON object representing the restaurant
                 JSONObject tabResto = restaurantArray.getJSONObject(i);
@@ -260,6 +271,28 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
 //                on recupere la liste des moyens de communication
                 JSONArray moyenCommunicationArray = infoTmp.getJSONArray(COMMUNICATION_LIST);
+
+
+                boolean illustrationExiste = !tabResto.isNull(ILLUSTRATION_LIST);
+
+//                on recupere la liste des illustration
+                System.out.println("illustration existe  : " + illustrationExiste);
+                if (illustrationExiste)
+                {
+                    JSONArray illustrationsArray = tabResto.getJSONArray(ILLUSTRATION_LIST);
+                    urlListImage = getUrlListImage(TRADUCTION_FICHIER_LIST, LABEL_URL_LIST_IMG, illustrationsArray);
+                    urlFicheImage = getUrlListImage(TRADUCTION_FICHIER_LIST, LABEL_URL_LIST_IMG, illustrationsArray);
+                    urlDiaporamaImage = getUrlListImage(TRADUCTION_FICHIER_LIST, LABEL_URL_LIST_IMG, illustrationsArray);
+                    urlImage = getUrlListImage(TRADUCTION_FICHIER_LIST, LABEL_URL_LIST_IMG, illustrationsArray);
+
+
+                    System.out.println("L'url de l'image est la suivante : " + urlImage);
+                    System.out.println("L'url liste de l'image est la suivante : " + urlListImage);
+                    System.out.println("L'url fiche de l'image est la suivante : " + urlFicheImage);
+                    System.out.println("L'url diaporama de l'image est la suivante : " + urlDiaporamaImage);
+                }
+
+
 
                 System.out.println("Le nom du restaurant est : "+nomRestaurant);
                 System.out.println("Les moyens de communnication sont : ");
@@ -297,6 +330,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                     System.out.println(descriptifRestaurant);
                 }
 
+
+
+
                 System.out.println("------------------------------");
 //                pressure = tabResto.getDouble(OWM_PRESSURE);
 //                humidity = tabResto.getInt(OWM_HUMIDITY);
@@ -317,8 +353,22 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 //                low = temperatureObject.getDouble(OWM_MIN);
 //
                 ContentValues restaurantValues = new ContentValues();
+
+//                ByteArrayOutputStream tableauOctetImage=new ByteArrayOutputStream();
+////                on recupere l'image depuis l'url
+//                Bitmap image = Utility.getBitmapFromURL(urlListImage);
+//                byte[] imageEnOctet=null;
+//                System.out.println("On est avant le si ");
+//                if (image != null) {
+////               On la compresse
+//                    System.out.println("on est dans le si de l'image non null");
+//                    image.compress(Bitmap.CompressFormat.PNG, 100, tableauOctetImage);
+//                    imageEnOctet = tableauOctetImage.toByteArray();
+//
+//                }
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_RESTAURANT_ID, idRestaurant);
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_NAME, nomRestaurant);
+                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_URL_IMG_LIST,urlListImage );
 //                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION, descriptifRestaurant);
 //                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DATE, dateTime);
 //                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_HUMIDITY, humidity);
@@ -344,7 +394,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 cVVector.toArray(cvArray);
                 getContext().getContentResolver().bulkInsert(dataBaseRestaurantUri, cvArray);
 
-//                // delete old data so we don't build up an endless history
+                // delete old data so we don't build up an endless history
 //                getContext().getContentResolver().delete(RestaurantContract.RestaurantEntry.CONTENT_URI,
 //                        RestaurantContract.RestaurantEntry.COLUMN_DATE + " <= ?",
 //                        new String[] {Long.toString(dayTime.setJulianDay(julianStartDay-1))});
@@ -375,6 +425,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             else {
                 System.out.println("nb de ligne : " + restaurantCursor.getCount());
             }
+            restaurantCursor.close();
 //            System.out.println("nom");
 //            System.out.println("-----------");
 ////            on affiche toutes les valeurs inserer
@@ -399,6 +450,15 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             e.printStackTrace();
         }
         System.out.println("On sort de la fonction");
+    }
+
+    private String getUrlListImage(String TRADUCTION_FICHIER_LIST, String LABEL_URL_LIST_IMG, JSONArray illustrationsArray) throws JSONException {
+        String urlListImage;
+        JSONArray traductionFichierArray;
+        traductionFichierArray = illustrationsArray.getJSONObject(0).getJSONArray(TRADUCTION_FICHIER_LIST);
+        JSONObject traductionJsonObject = traductionFichierArray.getJSONObject(0);
+        urlListImage = traductionJsonObject.getString(LABEL_URL_LIST_IMG);
+        return urlListImage;
     }
 
     private void notifyWeather() {
