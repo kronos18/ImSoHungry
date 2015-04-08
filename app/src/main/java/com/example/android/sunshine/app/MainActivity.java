@@ -81,6 +81,11 @@ public class MainActivity extends ActionBarActivity implements RestaurantFragmen
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
+        else if (id == R.id.action_map)
+        {
+            startActivity(new Intent(this, MapsActivity.class));
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
