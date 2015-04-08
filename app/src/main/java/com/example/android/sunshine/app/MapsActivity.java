@@ -1,7 +1,8 @@
 package com.example.android.sunshine.app;
 
-import android.support.v4.app.FragmentActivity;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -53,6 +54,11 @@ public class MapsActivity extends FragmentActivity {
         }
     }
 
+    private void getListRestaurants()
+    {
+        Cursor cursor = new Cursor();
+    }
+
     /**
      * This is where we can add markers or lines, add listeners or move the camera. In this case, we
      * just add a marker near Africa.
@@ -60,6 +66,10 @@ public class MapsActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
+
+        //Pour récupérer les latitudes et longitudes à partir d'une adresse,
+        //Il faut utiliser la Google Geocoding API : https://developers.google.com/maps/documentation/geocoding/
+
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
     }
 }
