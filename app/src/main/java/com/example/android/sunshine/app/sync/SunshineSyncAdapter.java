@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.Vector;
 
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
@@ -208,13 +209,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         final String COMMUNICATION_LIST = "moyensCommunication";
         final String TRADUCTION_FICHIER_LIST = "traductionFichiers";
         final String RESTAURANT_ID = "id";
-        final String NOM = "nom";
+        final String LABEL_NOM = "nom";
         final String TYPE = "type";
         final String COORDONNEES = "coordonnees";
         final String LABEL_LIBELLE = "libelleFr";
         final String LABEL_FR = "fr";
         final String LABEL_ADRESSE = "adresse1";
         final String LABEL_CODEPOSTAL = "codePostal";
+        final String LABEL_COMMUNE = "commune";
         final String LABEL_URL_LIST_IMG = "urlListe";
         final String LABEL_URL_FICHE_IMG = "urlFiche";
         final String LABEL_URL_DIAPORAMA_IMG = "urlDiaporama";
@@ -255,7 +257,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 idRestaurant=i;
                 String description;
                 String urlListImage = null;
-                String urlFicheImage ;
+                String urlFicheImage = null;
                 String urlDiaporamaImage;
                 String urlImage;
 
@@ -298,6 +300,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 System.out.println("Le nom du restaurant est : "+nomRestaurant);
                 System.out.println("Les moyens de communnication sont : ");
 
+                //On cree la liste des moyens de communication du restaurant
+                LinkedList<MoyenCommunication> moyenCommunicationListe = new LinkedList<MoyenCommunication>();
+
                 //on recupere les donnees concernants les moyens de communications du restaurant
                 for (int j = 0; j < moyenCommunicationArray.length(); j++)
                 {
@@ -312,7 +317,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                     //On recupere les coordonnees du moyen de communication
                     String coordonneesMoyenCommunication = coordonneesJSON.getString(LABEL_FR);
 
-                    System.out.println(typeMoyenCommunication +", "+ coordonneesMoyenCommunication+"\n");
+                    MoyenCommunication monMoyenDeCommunication = new MoyenCommunication(typeMoyenCommunication, coordonneesMoyenCommunication);
+
+                    //on ajoute le moyen de commu a la liste
+                    moyenCommunicationListe.add(monMoyenDeCommunication);
+
+                    System.out.println(typeMoyenCommunication+" :  " + coordonneesMoyenCommunication+"\n");
 
                 }
 
@@ -332,67 +342,33 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 }
 
 
+                /*Recuperation de l'adresse, de la ville et du code postal du restaurant*/
+                String adresseRestaurant = tabResto.getJSONObject(LOCALISATION).getJSONObject(ADRESSE).getString(LABEL_ADRESSE);
+                String codePostalRestaurant = tabResto.getJSONObject(LOCALISATION).getJSONObject(ADRESSE).getString(LABEL_CODEPOSTAL);
+                String villeRestaurant = tabResto.getJSONObject(LOCALISATION).getJSONObject(ADRESSE).getJSONObject(LABEL_COMMUNE).getString(LABEL_NOM);
+                System.out.println("adresse : "+adresseRestaurant+", codeP : "+codePostalRestaurant+", ville : "+villeRestaurant);
 
 
                 System.out.println("------------------------------");
-//                pressure = tabResto.getDouble(OWM_PRESSURE);
-//                humidity = tabResto.getInt(OWM_HUMIDITY);
-//                windSpeed = tabResto.getDouble(OWM_WINDSPEED);
-//                windDirection = tabResto.getDouble(OWM_WIND_DIRECTION);
-
-                // Description is in a child array called "weather", which is 1 element long.
-                // That element also contains a weather code.
-//                JSONObject weatherObject =
-//                        tabResto.getJSONArray(OWM_WEATHER).getJSONObject(0);
-//                description = weatherObject.getString(OWM_DESCRIPTION);
-//                weatherId = weatherObject.getInt(RESTAURANT_ID);
 //
-//                // Temperatures are in a child object called "temp".  Try not to name variables
-//                // "temp" when working with temperature.  It confuses everybody.
-//                JSONObject temperatureObject = tabResto.getJSONObject(OWM_TEMPERATURE);
-//                high = temperatureObject.getDouble(OWM_MAX);
-//                low = temperatureObject.getDouble(OWM_MIN);
-//
+                /*On cree notre content value*/
                 ContentValues restaurantValues = new ContentValues();
 
-//                ByteArrayOutputStream tableauOctetImage=new ByteArrayOutputStream();
-////                on recupere l'image depuis l'url
-//                Bitmap image = Utility.getBitmapFromURL(urlListImage);
-//                byte[] imageEnOctet=null;
-//                System.out.println("On est avant le si ");
-//                if (image != null) {
-////               On la compresse
-//                    System.out.println("on est dans le si de l'image non null");
-//                    image.compress(Bitmap.CompressFormat.PNG, 100, tableauOctetImage);
-//                    imageEnOctet = tableauOctetImage.toByteArray();
-//
-//                }
-
-
-//                ImageView imageView = new ImageView(getContext());
-// /*
-//        On telecharge les images illustrants le restaurant
-//         */
-//                DownloadImageTask imageTask;
-//                if (urlListImage != null) {
-//
-//                    imageTask = new DownloadImageTask(imageView);
-//                    //on applique l'image a l'icone view
-//                    imageTask.execute(urlListImage);
-//                    imageView.buildDrawingCache();
-//                }
-
-                byte[] imageByte = null;
-                if (urlListImage != null) {
-                    Bitmap bitmap = Utility.loadBitmap(urlListImage);
-                    imageByte = Utility.getBytes(bitmap);
-                    System.out.println("Image null : " + imageByte);
-                }
+                /*On se charge de recuperer les images et de les mettre en base de donnée*/
+                byte[] imageListeByte = null;
+                byte[] imageFicheByte = null;
+                imageListeByte = getImagesBytesFromUrl(urlListImage, imageListeByte);
+                imageFicheByte = getImagesBytesFromUrl(urlFicheImage, imageFicheByte);
 
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_RESTAURANT_ID, idRestaurant);
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_NAME, nomRestaurant);
+                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_ADRESSE, adresseRestaurant);
+                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_VILLE, villeRestaurant);
+                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_CODEPOSTAL, codePostalRestaurant);
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION, descriptifRestaurant);
-                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_IMG_LIST,imageByte );
+
+                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_IMG_LIST,imageListeByte );
+                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_IMAGE_FICHE,imageFicheByte );
 //                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION, descriptifRestaurant);
 //                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DATE, dateTime);
 //                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_HUMIDITY, humidity);
@@ -474,6 +450,17 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
             e.printStackTrace();
         }
         System.out.println("On sort de la fonction");
+    }
+
+    private byte[] getImagesBytesFromUrl(String urlListImage, byte[] imageByte) {
+        if (urlListImage != null) {
+            Bitmap bitmap = Utility.loadBitmap(urlListImage);
+            imageByte = Utility.getBytes(bitmap);
+            System.out.println("Image null : " + imageByte);
+        }
+        else
+            return null;
+        return imageByte;
     }
 
     private String getUrlListImage(String TRADUCTION_FICHIER_LIST, String LABEL_URL_LIST_IMG, JSONArray illustrationsArray) throws JSONException {

@@ -86,7 +86,7 @@ public class RestaurantAdaptateur extends CursorAdapter {
 //            imageTask.execute(imageUrl);
 //        }
 
-        //on recupere l'image dans la bdd et on l'applique
+        //on recupere l'image dans la bdd et on l'applique a iconView
         byte[] image = cursor.getBlob(IndexBDRestaurant.INDEX_IMAGE_LISTE);
         Bitmap imageBitmap = null;
         if (image != null) {

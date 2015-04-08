@@ -88,6 +88,7 @@ public class RestaurantContract {
         public static final String COLUMN_IMAGE_FICHE = "image_Fiche";
         public static final String COLUMN_IMAGE_DIAPO = "image_Diaporama";
         public static final String COLUMN_IMAGE = "image";
+        public static final String COLUMN_TYPE_COMMU = "type_communication";
 
 
         public static Uri buildRestaurantUri(long id)

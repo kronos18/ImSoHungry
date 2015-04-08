@@ -80,6 +80,7 @@ public class RestaurantProvider extends ContentProvider
         return returnUri;
     }
 
+
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         return 0;

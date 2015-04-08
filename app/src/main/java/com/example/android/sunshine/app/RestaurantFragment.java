@@ -61,8 +61,12 @@ public class RestaurantFragment extends Fragment implements LoaderManager.Loader
             // So the convenience is worth it.
             RestaurantContract.RestaurantEntry.TABLE_NAME + "." + RestaurantContract.RestaurantEntry._ID,
             RestaurantContract.RestaurantEntry.COLUMN_NAME,
+            RestaurantContract.RestaurantEntry.COLUMN_ADRESSE,
+            RestaurantContract.RestaurantEntry.COLUMN_VILLE,
+            RestaurantContract.RestaurantEntry.COLUMN_CODEPOSTAL,
             RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION,
             RestaurantContract.RestaurantEntry.COLUMN_IMG_LIST,
+            RestaurantContract.RestaurantEntry.COLUMN_IMAGE_FICHE
 //            RestaurantContract.RestaurantEntry.COLUMN_LATITUDE,
 //            RestaurantContract.RestaurantEntry.COLUMN_LONGITUDE
     };
