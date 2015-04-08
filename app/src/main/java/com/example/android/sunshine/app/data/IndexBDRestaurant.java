@@ -13,4 +13,6 @@ public class IndexBDRestaurant {
     public static final int INDEX_DESCRIPTION = 5;
     public static final int INDEX_IMAGE_LISTE = 6;
     public static final int INDEX_IMAGE_FICHE = 7;
+    public static final int INDEX_LATITUDE = 8;
+    public static final int INDEX_LONGITUDE = 9;
 }

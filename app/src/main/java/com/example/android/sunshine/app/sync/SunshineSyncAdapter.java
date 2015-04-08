@@ -12,6 +12,7 @@ import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -225,6 +226,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         final String PRESENTATION = "presentation";
         final String DESCRIPTIF = "descriptifCourt";
         final String LOCALISATION = "localisation";
+        final String GEOJSON = "geoJson";
+        final String COORDONNEE_LIST = "coordinates";
+
         final String ADRESSE = "adresse";
         final String GEOLOCALISATION = "geolocalisation";
 
@@ -260,6 +264,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 String urlFicheImage = null;
                 String urlDiaporamaImage;
                 String urlImage;
+                Location localisation = null;
 
                 // Get the JSON object representing the restaurant
                 JSONObject tabResto = restaurantArray.getJSONObject(i);
@@ -341,11 +346,16 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                     System.out.println(descriptifRestaurant);
                 }
 
+                    /****** A CONTINUER POUR LES COORDONNEE DU RESTO*/
+                /*Recuperation de la localisation gps du restaurant*/
+                localisation = new Location("LocalisationRestaurant");
 
                 /*Recuperation de l'adresse, de la ville et du code postal du restaurant*/
-                String adresseRestaurant = tabResto.getJSONObject(LOCALISATION).getJSONObject(ADRESSE).getString(LABEL_ADRESSE);
-                String codePostalRestaurant = tabResto.getJSONObject(LOCALISATION).getJSONObject(ADRESSE).getString(LABEL_CODEPOSTAL);
-                String villeRestaurant = tabResto.getJSONObject(LOCALISATION).getJSONObject(ADRESSE).getJSONObject(LABEL_COMMUNE).getString(LABEL_NOM);
+                JSONObject champsAdressejsonObject = tabResto.getJSONObject(LOCALISATION).getJSONObject(ADRESSE);
+
+                String adresseRestaurant = champsAdressejsonObject.getString(LABEL_ADRESSE);
+                String codePostalRestaurant = champsAdressejsonObject.getString(LABEL_CODEPOSTAL);
+                String villeRestaurant = champsAdressejsonObject.getJSONObject(LABEL_COMMUNE).getString(LABEL_NOM);
                 System.out.println("adresse : "+adresseRestaurant+", codeP : "+codePostalRestaurant+", ville : "+villeRestaurant);
 
 

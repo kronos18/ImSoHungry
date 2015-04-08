@@ -57,8 +57,8 @@ public class RestaurantDataBaseHelper extends SQLiteOpenHelper {
 //                RestaurantEntry.COLUMN_TYPE_COMMU + " VARCHAR2(128) , " +
                 RestaurantEntry.COLUMN_IMG_LIST + " BLOB ," +
                 RestaurantEntry.COLUMN_IMAGE_FICHE + " BLOB " +
-//                RestaurantEntry.COLUMN_LATITUDE + " REAL NOT NULL, " +
-//                RestaurantEntry.COLUMN_LONGITUDE + " REAL NOT NULL " +
+                RestaurantEntry.COLUMN_LATITUDE + " REAL NOT NULL, " +
+                RestaurantEntry.COLUMN_LONGITUDE + " REAL NOT NULL " +
                 ");";
 
         System.out.println(SQL_CREATE_RESTAURANT_TABLE);
