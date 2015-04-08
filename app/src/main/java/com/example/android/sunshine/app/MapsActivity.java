@@ -1,6 +1,5 @@
 package com.example.android.sunshine.app;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -54,10 +53,10 @@ public class MapsActivity extends FragmentActivity {
         }
     }
 
-    private void getListRestaurants()
-    {
-        Cursor cursor = new Cursor();
-    }
+//    private void getListRestaurants()
+//    {
+//        Cursor cursor = new Cursor();
+//    }
 
     /**
      * This is where we can add markers or lines, add listeners or move the camera. In this case, we

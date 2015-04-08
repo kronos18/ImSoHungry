@@ -350,6 +350,13 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 /*Recuperation de la localisation gps du restaurant*/
                 localisation = new Location("LocalisationRestaurant");
 
+                JSONArray coordonneeArray = tabResto.getJSONObject(LOCALISATION).getJSONObject(GEOLOCALISATION).getJSONObject(GEOJSON).getJSONArray(COORDONNEE_LIST);
+                String latitude = coordonneeArray.getString(0);
+                String longitude = coordonneeArray.getString(1);
+
+
+                System.out.println("La latitude : "+latitude+", la longitude : "+longitude);
+
                 /*Recuperation de l'adresse, de la ville et du code postal du restaurant*/
                 JSONObject champsAdressejsonObject = tabResto.getJSONObject(LOCALISATION).getJSONObject(ADRESSE);
 
@@ -379,6 +386,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_IMG_LIST,imageListeByte );
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_IMAGE_FICHE,imageFicheByte );
+                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_LATITUDE,latitude);
+                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_LONGITUDE,longitude);
 //                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION, descriptifRestaurant);
 //                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DATE, dateTime);
 //                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_HUMIDITY, humidity);
