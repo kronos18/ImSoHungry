@@ -8,4 +8,5 @@ public class IndexBDRestaurant {
     public static final int INDEX_RESTAURANT_ID = 0;
     public static final int INDEX_NOM = 1;
     public static final int INDEX_DESCRIPTION = 2;
+    public static final int INDEX_IMAGE_LISTE = 3;
 }

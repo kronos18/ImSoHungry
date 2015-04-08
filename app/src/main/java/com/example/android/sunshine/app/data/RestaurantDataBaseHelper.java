@@ -26,8 +26,8 @@ import com.example.android.sunshine.app.data.RestaurantContract.RestaurantEntry;
  */
 public class RestaurantDataBaseHelper extends SQLiteOpenHelper {
 
-    // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 7;
+    // Pour mettre a jour la base de donnee, on change la version de la bdd
+    private static final int DATABASE_VERSION = 9;
 
     static final String DATABASE_NAME = "restaurant.db";
 
@@ -52,8 +52,8 @@ public class RestaurantDataBaseHelper extends SQLiteOpenHelper {
 //                RestaurantEntry.COLUMN_ADRESSE+ " VARCHAR2(512) NOT NULL," +
 //                RestaurantEntry.COLUMN_VILLE + " VARCHAR2(128) NOT NULL, " +
 //                RestaurantEntry.COLUMN_CODEPOSTAL + " INTEGER NOT NULL, " +
-//                RestaurantEntry.COLUMN_DESCRIPTION + " VARCHAR2(512)  ," +
-                RestaurantEntry.COLUMN_URL_IMG_LIST + " VARCHAR2(512) " +
+                RestaurantEntry.COLUMN_DESCRIPTION + " VARCHAR2(512)  ," +
+                RestaurantEntry.COLUMN_IMG_LIST + " BLOB " +
 //                RestaurantEntry.COLUMN_LATITUDE + " REAL NOT NULL, " +
 //                RestaurantEntry.COLUMN_LONGITUDE + " REAL NOT NULL " +
                 ");";

@@ -61,8 +61,8 @@ public class RestaurantFragment extends Fragment implements LoaderManager.Loader
             // So the convenience is worth it.
             RestaurantContract.RestaurantEntry.TABLE_NAME + "." + RestaurantContract.RestaurantEntry._ID,
             RestaurantContract.RestaurantEntry.COLUMN_NAME,
-            RestaurantContract.RestaurantEntry.COLUMN_URL_IMG_LIST
-//            RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION
+            RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION,
+            RestaurantContract.RestaurantEntry.COLUMN_IMG_LIST,
 //            RestaurantContract.RestaurantEntry.COLUMN_LATITUDE,
 //            RestaurantContract.RestaurantEntry.COLUMN_LONGITUDE
     };
@@ -72,9 +72,9 @@ public class RestaurantFragment extends Fragment implements LoaderManager.Loader
     // on inscrit l'indice de chaque colonne pour la bdd
     static final int COL_RESTAURANT_ID = 0;
     static final int COL_RESTAURANT_NAME = 1;
-    static final int COL_RESTAURANT_URL_IMG_LIST = 2;
-    //    static final int COL_WEATHER_MAX_TEMP = 3;
-//    static final int COL_WEATHER_MIN_TEMP = 4;
+    static final int COL_RESTAURANT_DESCRIPTION= 2;
+    static final int COL_RESTAURANT_IMG_LIST = 3;
+    //    static final int COL_WEATHER_MIN_TEMP = 4;
 //    static final int COL_LOCATION_SETTING = 5;
 //    static final int COL_WEATHER_CONDITION_ID = 6;
     static final int COL_COORD_LAT = 3;

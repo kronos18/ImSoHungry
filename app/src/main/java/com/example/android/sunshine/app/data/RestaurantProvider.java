@@ -91,7 +91,8 @@ public class RestaurantProvider extends ContentProvider
         return 0;
     }
 
-    public void close() {
+    public void close()
+    {
         baseDeDonnee.close();
     }
 //

@@ -2,6 +2,7 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.sunshine.app.data.DownloadImageTask;
+import com.example.android.sunshine.app.data.IndexBDRestaurant;
 
 /**
  * {@link RestaurantAdaptateur} exposes a list of weather forecasts
@@ -72,14 +73,28 @@ public class RestaurantAdaptateur extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
         System.out.println("apres le get tag");
 
-        String imageUrl = cursor.getString(RestaurantFragment.COL_RESTAURANT_URL_IMG_LIST);
-        System.out.println("L'url de l'image en bdd est : " +imageUrl);
-        DownloadImageTask imageTask;
-        if (imageUrl != null) {
+//        String imageUrl = cursor.getString(RestaurantFragment.COL_RESTAURANT_IMG_LIST);
+//        System.out.println("L'url de l'image en bdd est : " +imageUrl);
+//        /*
+//        On telecharge les images illustrants le restaurant
+//         */
+//        DownloadImageTask imageTask;
+//        if (imageUrl != null) {
+//
+//            imageTask = new DownloadImageTask(viewHolder.iconView);
+//            //on applique l'image a l'icone view
+//            imageTask.execute(imageUrl);
+//        }
 
-            imageTask = new DownloadImageTask(viewHolder.iconView);
-            imageTask.execute(imageUrl);
+        //on recupere l'image dans la bdd et on l'applique
+        byte[] image = cursor.getBlob(IndexBDRestaurant.INDEX_IMAGE_LISTE);
+        Bitmap imageBitmap = null;
+        if (image != null) {
+            imageBitmap = Utility.getImage(image);
+
         }
+        viewHolder.iconView.setImageBitmap(imageBitmap);
+
 //        switch (viewType) {
 //            case VIEW_TYPE_TODAY: {
 //                // Get weather icon

@@ -22,9 +22,13 @@ import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.io.OutputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -36,6 +40,7 @@ public class Utility {
         return prefs.getString(context.getString(R.string.pref_location_key),
                 context.getString(R.string.pref_location_default));
     }
+    private static final int IO_BUFFER_SIZE = 4 * 1024;
 
     /**
      * La fonction retourne la latitude
@@ -268,19 +273,74 @@ public class Utility {
     }
 
 
-    public static Bitmap getBitmapFromURL(String imageUrl) {
+    public static Bitmap loadBitmap(String url) {
+        Bitmap bitmap = null;
+        InputStream in = null;
+        BufferedOutputStream out = null;
+
         try {
-            URL url = new URL(imageUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
+            in = new BufferedInputStream(new URL(url).openStream(), IO_BUFFER_SIZE);
+
+            final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+            out = new BufferedOutputStream(dataStream, IO_BUFFER_SIZE);
+            copy(in, out);
+            out.flush();
+
+            final byte[] data = dataStream.toByteArray();
+            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            System.out.println("Could not load Bitmap from: " + url);
+        } finally {
+            closeStream(in);
+            closeStream(out);
         }
+
+        return bitmap;
+    }
+
+    /**
+     * Closes the specified stream.
+     *
+     * @param stream The stream to close.
+     */
+    private static void closeStream(Closeable stream) {
+        if (stream != null) {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                System.out.println("Could not close stream");
+            }
+        }
+    }
+
+
+    /**
+     * Copy the content of the input stream into the output stream, using a
+     * temporary byte array buffer whose size is defined by
+     * {@link #IO_BUFFER_SIZE}.
+     *
+     * @param in The input stream to copy from.
+     * @param out The output stream to copy to.
+     * @throws IOException If any error occurs during the copy.
+     */
+    private static void copy(InputStream in, OutputStream out) throws IOException {
+        byte[] b = new byte[IO_BUFFER_SIZE];
+        int read;
+        while ((read = in.read(b)) != -1) {
+            out.write(b, 0, read);
+        }
+    }
+
+    // convert from bitmap to byte array
+    public static byte[] getBytes(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        return stream.toByteArray();
+    }
+
+    // convert from byte array to bitmap
+    public static Bitmap getImage(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 
 

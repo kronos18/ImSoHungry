@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -366,9 +367,32 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 //                    imageEnOctet = tableauOctetImage.toByteArray();
 //
 //                }
+
+
+//                ImageView imageView = new ImageView(getContext());
+// /*
+//        On telecharge les images illustrants le restaurant
+//         */
+//                DownloadImageTask imageTask;
+//                if (urlListImage != null) {
+//
+//                    imageTask = new DownloadImageTask(imageView);
+//                    //on applique l'image a l'icone view
+//                    imageTask.execute(urlListImage);
+//                    imageView.buildDrawingCache();
+//                }
+
+                byte[] imageByte = null;
+                if (urlListImage != null) {
+                    Bitmap bitmap = Utility.loadBitmap(urlListImage);
+                    imageByte = Utility.getBytes(bitmap);
+                    System.out.println("Image null : " + imageByte);
+                }
+
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_RESTAURANT_ID, idRestaurant);
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_NAME, nomRestaurant);
-                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_URL_IMG_LIST,urlListImage );
+                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION, descriptifRestaurant);
+                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_IMG_LIST,imageByte );
 //                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION, descriptifRestaurant);
 //                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DATE, dateTime);
 //                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_HUMIDITY, humidity);
