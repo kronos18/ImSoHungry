@@ -263,7 +263,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 String urlListImage = null;
                 String urlFicheImage = null;
                 String urlDiaporamaImage;
-                String urlImage;
+                String urlImage = null;
                 Location localisation = null;
 
                 // Get the JSON object representing the restaurant
@@ -289,9 +289,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 {
                     JSONArray illustrationsArray = tabResto.getJSONArray(ILLUSTRATION_LIST);
                     urlListImage = getUrlListImage(TRADUCTION_FICHIER_LIST, LABEL_URL_LIST_IMG, illustrationsArray);
-                    urlFicheImage = getUrlListImage(TRADUCTION_FICHIER_LIST, LABEL_URL_LIST_IMG, illustrationsArray);
-                    urlDiaporamaImage = getUrlListImage(TRADUCTION_FICHIER_LIST, LABEL_URL_LIST_IMG, illustrationsArray);
-                    urlImage = getUrlListImage(TRADUCTION_FICHIER_LIST, LABEL_URL_LIST_IMG, illustrationsArray);
+                    urlFicheImage = getUrlListImage(TRADUCTION_FICHIER_LIST, LABEL_URL_FICHE_IMG, illustrationsArray);
+                    urlDiaporamaImage = getUrlListImage(TRADUCTION_FICHIER_LIST, LABEL_URL_DIAPORAMA_IMG, illustrationsArray);
+                    urlImage = getUrlListImage(TRADUCTION_FICHIER_LIST, LABEL_URL__IMG, illustrationsArray);
 
 
                     System.out.println("L'url de l'image est la suivante : " + urlImage);
@@ -375,7 +375,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 byte[] imageListeByte = null;
                 byte[] imageFicheByte = null;
                 imageListeByte = getImagesBytesFromUrl(urlListImage, imageListeByte);
-                imageFicheByte = getImagesBytesFromUrl(urlFicheImage, imageFicheByte);
+                imageFicheByte = getImagesBytesFromUrl(urlImage, imageFicheByte);
 
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_RESTAURANT_ID, idRestaurant);
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_NAME, nomRestaurant);
@@ -471,9 +471,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         System.out.println("On sort de la fonction");
     }
 
-    private byte[] getImagesBytesFromUrl(String urlListImage, byte[] imageByte) {
-        if (urlListImage != null) {
-            Bitmap bitmap = Utility.loadBitmap(urlListImage);
+    private byte[] getImagesBytesFromUrl(String url, byte[] imageByte) {
+        if (url != null) {
+            Bitmap bitmap = Utility.loadBitmap(url);
             imageByte = Utility.getBytes(bitmap);
             System.out.println("Image null : " + imageByte);
         }
@@ -482,12 +482,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         return imageByte;
     }
 
-    private String getUrlListImage(String TRADUCTION_FICHIER_LIST, String LABEL_URL_LIST_IMG, JSONArray illustrationsArray) throws JSONException {
+    private String getUrlListImage(String TRADUCTION_FICHIER_LIST, String urlImage, JSONArray illustrationsArray) throws JSONException {
         String urlListImage;
         JSONArray traductionFichierArray;
         traductionFichierArray = illustrationsArray.getJSONObject(0).getJSONArray(TRADUCTION_FICHIER_LIST);
         JSONObject traductionJsonObject = traductionFichierArray.getJSONObject(0);
-        urlListImage = traductionJsonObject.getString(LABEL_URL_LIST_IMG);
+        urlListImage = traductionJsonObject.getString(urlImage);
         return urlListImage;
     }
 

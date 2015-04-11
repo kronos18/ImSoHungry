@@ -17,6 +17,7 @@ package com.example.android.sunshine.app;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -34,8 +35,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.sunshine.app.data.IndexBDRestaurant;
 import com.example.android.sunshine.app.data.RestaurantContract;
-import com.example.android.sunshine.app.data.RestaurantContract.RestaurantEntry;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -53,36 +54,48 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private static final int DETAIL_LOADER = 0;
 
-    private static final String[] DETAIL_COLUMNS = {
-            RestaurantEntry.TABLE_NAME + "." + RestaurantEntry._ID,
-            RestaurantContract.RestaurantEntry.COLUMN_RESTAURANT_ID,
-            // This works because the RestaurantProvider returns location data joined with
-            // weather data, even though they're stored in two different tables.
-//            RestaurantContract.LocationEntry.COLUMN_LOCATION_SETTING
+    public static final String[] RESTAURANT_COLUMNS = {
+            // In this case the id needs to be fully qualified with a table name, since
+            // the content provider joins the location & weather tables in the background
+            // (both have an _id column)
+            // On the one hand, that's annoying.  On the other, you can search the weather table
+            // using the location set by the user, which is only in the Location table.
+            // So the convenience is worth it.
+            RestaurantContract.RestaurantEntry.TABLE_NAME + "." + RestaurantContract.RestaurantEntry._ID,
+            RestaurantContract.RestaurantEntry.COLUMN_NAME,
+            RestaurantContract.RestaurantEntry.COLUMN_ADRESSE,
+            RestaurantContract.RestaurantEntry.COLUMN_VILLE,
+            RestaurantContract.RestaurantEntry.COLUMN_CODEPOSTAL,
+            RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION,
+            RestaurantContract.RestaurantEntry.COLUMN_IMG_LIST,
+            RestaurantContract.RestaurantEntry.COLUMN_IMAGE_FICHE
+//            RestaurantContract.RestaurantEntry.COLUMN_LATITUDE,
+//            RestaurantContract.RestaurantEntry.COLUMN_LONGITUDE
     };
 
     // These indices are tied to DETAIL_COLUMNS.  If DETAIL_COLUMNS changes, these
     // must change.
-    public static final int COL_WEATHER_ID = 0;
-    public static final int COL_WEATHER_DATE = 1;
-    public static final int COL_WEATHER_DESC = 2;
-    public static final int COL_WEATHER_MAX_TEMP = 3;
-    public static final int COL_WEATHER_MIN_TEMP = 4;
-    public static final int COL_WEATHER_HUMIDITY = 5;
-    public static final int COL_WEATHER_PRESSURE = 6;
-    public static final int COL_WEATHER_WIND_SPEED = 7;
-    public static final int COL_WEATHER_DEGREES = 8;
-    public static final int COL_WEATHER_CONDITION_ID = 9;
+//    public static final int COL_WEATHER_ID = 0;
+//    public static final int COL_WEATHER_DATE = 1;
+//    public static final int COL_WEATHER_DESC = 2;
+//    public static final int COL_WEATHER_MAX_TEMP = 3;
+//    public static final int COL_WEATHER_MIN_TEMP = 4;
+//    public static final int COL_WEATHER_HUMIDITY = 5;
+//    public static final int COL_WEATHER_PRESSURE = 6;
+//    public static final int COL_WEATHER_WIND_SPEED = 7;
+//    public static final int COL_WEATHER_DEGREES = 8;
+//    public static final int COL_WEATHER_CONDITION_ID = 9;
 
     private ImageView mIconView;
-    private TextView mFriendlyDateView;
-    private TextView mDateView;
+    private TextView  mAdresseView, mVilleView, moyenCommunicationView ,mFriendlyDateView;
+    private TextView mDateView,mCodeView;
     private TextView mDescriptionView;
     private TextView mHighTempView;
     private TextView mLowTempView;
     private TextView mHumidityView;
     private TextView mWindView;
     private TextView mPressureView;
+    private TextView mNomRestaurantView;
 
     public DetailFragment() {
         setHasOptionsMenu(true);
@@ -96,18 +109,18 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         Bundle arguments = getArguments();
         if (arguments != null) {
             mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+            System.out.println("affichage mUri : "+mUri );
         }
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         mIconView = (ImageView) rootView.findViewById(R.id.detail_icon);
-        mDateView = (TextView) rootView.findViewById(R.id.detail_date_textview);
-        mFriendlyDateView = (TextView) rootView.findViewById(R.id.detail_day_textview);
-        mDescriptionView = (TextView) rootView.findViewById(R.id.detail_forecast_textview);
-        mHighTempView = (TextView) rootView.findViewById(R.id.detail_high_textview);
-        mLowTempView = (TextView) rootView.findViewById(R.id.detail_low_textview);
-        mHumidityView = (TextView) rootView.findViewById(R.id.detail_humidity_textview);
-        mWindView = (TextView) rootView.findViewById(R.id.detail_wind_textview);
-        mPressureView = (TextView) rootView.findViewById(R.id.detail_pressure_textview);
+//        mDateView = (TextView) rootView.findViewById(R.id.detail_date_textview);
+        mNomRestaurantView = (TextView) rootView.findViewById(R.id.detail_nomRestaurant);
+        mDescriptionView = (TextView) rootView.findViewById(R.id.detail_descriptionRestaurant_textview);
+        mAdresseView = (TextView) rootView.findViewById(R.id.detail_adresse_textview);
+        mVilleView = (TextView) rootView.findViewById(R.id.detail_ville_textview);
+        mCodeView = (TextView) rootView.findViewById(R.id.detail_codeP_textview);
+
         System.out.println("On sort de onCreateView de DetailFragment");
         return rootView;
     }
@@ -164,7 +177,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             return new CursorLoader(
                     getActivity(),
                     mUri,
-                    DETAIL_COLUMNS,
+                    RESTAURANT_COLUMNS,
                     null,
                     null,
                     null
@@ -175,57 +188,57 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data)
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor)
     {
         System.out.println("On est dans onLoadFinished ");
-        if (data != null && data.moveToFirst()) {
-            // Read weather condition ID from cursor
-            int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
+        String id = mUri.getLastPathSegment();
+        System.out.println("Le getlastPast : "+Integer.valueOf(id));
+        if (cursor != null && cursor.moveToPosition(Integer.valueOf(id)))
+        {
+            System.out.println("On est dans le si !");
+            System.out.println("Le nom de la colonne est de "+cursor.getColumnName(IndexBDRestaurant.INDEX_RESTAURANT_ID));
+            System.out.println("Le nb de colonne est de "+cursor.getColumnCount());
+            // On recupere l'id du restaurant
+            int restaurantId = cursor.getInt(IndexBDRestaurant.INDEX_RESTAURANT_ID);
+            System.out.println("On a recuperer l'indice du restaurant qui est "+restaurantId+" !");
 
             // Use weather art image
-            mIconView.setImageResource(Utility.getImageRestaurant(weatherId));
+//            mIconView.setImageResource(Utility.getImageRestaurant(restaurantId));
 
-            // Read date from cursor and update views for day of week and date
-            long date = data.getLong(COL_WEATHER_DATE);
-            String friendlyDateText = Utility.getDayName(getActivity(), date);
-            String dateText = Utility.getFormattedMonthDay(getActivity(), date);
-            mFriendlyDateView.setText(friendlyDateText);
-            mDateView.setText(dateText);
+            //on recupere l'image dans la bdd et on l'applique a iconView
+            byte[] image = cursor.getBlob(IndexBDRestaurant.INDEX_IMAGE_FICHE);
+            Bitmap imageBitmap = null;
+            if (image != null) {
+                imageBitmap = Utility.getImage(image);
 
-            // Read description from cursor and update view
-            String description = data.getString(COL_WEATHER_DESC);
+            }
+            mIconView.setImageBitmap(imageBitmap);
+
+//            // Read date from cursor and update views for day of week and date
+//            long date = cursor.getLong(COL_WEATHER_DATE);
+//            String friendlyDateText = Utility.getDayName(getActivity(), date);
+//            String dateText = Utility.getFormattedMonthDay(getActivity(), date);
+//            mFriendlyDateView.setText(friendlyDateText);
+//            mDateView.setText(dateText);
+
+            String nomRestaurant = cursor.getString(IndexBDRestaurant.INDEX_NOM);
+            mNomRestaurantView.setText(nomRestaurant);
+            // on lit la description et on met a jour la vue
+            String description = cursor.getString(IndexBDRestaurant.INDEX_DESCRIPTION);
             mDescriptionView.setText(description);
+
+            mAdresseView.setText("Adresse : " +cursor.getString(IndexBDRestaurant.INDEX_ADRESSE));
+            mVilleView.setText("Ville : " + cursor.getString(IndexBDRestaurant.INDEX_VILLE));
+
+            mCodeView.setText("Code postal : " + cursor.getString(IndexBDRestaurant.INDEX_CODEPOSTAL));
 
             // For accessibility, add a content description to the icon field
             mIconView.setContentDescription(description);
 
-            // Read high temperature from cursor and update view
-            boolean isMetric = Utility.isMetric(getActivity());
 
-            double high = data.getDouble(COL_WEATHER_MAX_TEMP);
-            String highString = Utility.formatTemperature(getActivity(), high);
-            mHighTempView.setText(highString);
-
-            // Read low temperature from cursor and update view
-            double low = data.getDouble(COL_WEATHER_MIN_TEMP);
-            String lowString = Utility.formatTemperature(getActivity(), low);
-            mLowTempView.setText(lowString);
-
-            // Read humidity from cursor and update view
-            float humidity = data.getFloat(COL_WEATHER_HUMIDITY);
-            mHumidityView.setText(getActivity().getString(R.string.format_humidity, humidity));
-
-            // Read wind speed and direction from cursor and update view
-            float windSpeedStr = data.getFloat(COL_WEATHER_WIND_SPEED);
-            float windDirStr = data.getFloat(COL_WEATHER_DEGREES);
-            mWindView.setText(Utility.getFormattedWind(getActivity(), windSpeedStr, windDirStr));
-
-            // Read pressure from cursor and update view
-            float pressure = data.getFloat(COL_WEATHER_PRESSURE);
-            mPressureView.setText(getActivity().getString(R.string.format_pressure, pressure));
 
             // We still need this for the share intent
-            mForecast = String.format("%s - %s - %s/%s", dateText, description, high, low);
+            mForecast = String.format("%s - %s", nomRestaurant, description);
 
             // If onCreateOptionsMenu has already happened, we need to update the share intent now.
             if (mShareActionProvider != null) {

@@ -21,8 +21,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,6 +30,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.sunshine.app.data.RestaurantContract;
@@ -146,24 +147,29 @@ public class RestaurantFragment extends Fragment implements LoaderManager.Loader
 //        on rattache l'adaptateur a celui des restaurants
         mListView.setAdapter(restaurantAdapter);
 
-        // We'll call our MainActivity
-//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//                // CursorAdapter returns a cursor at the correct position for getItem(), or null
-//                // if it cannot seek to that position.
-//                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-//                if (cursor != null) {
+//        We'll call our MainActivity
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // CursorAdapter returns a cursor at the correct position for getItem(), or null
+                // if it cannot seek to that position.
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                System.out.println("dans onitemClick, le curseur a "+cursor.getColumnCount()+" colonne");
+                System.out.println("URI : "+RestaurantContract.RestaurantEntry.CONTENT_URI);
+                System.out.println("uri build : "+RestaurantContract.RestaurantEntry.buildRestaurantUri(position));
+
+                //si notre curseur n'est pas null alors on a un resultat
+                if (cursor != null)
+                {
+
 //                    String locationSetting = Utility.getPreferredLocation(getActivity());
-//                    ((Callback) getActivity())
-//                            .onItemSelected(RestaurantContract.RestaurantEntry.buildWeatherLocationWithDate(
-//                                    locationSetting, cursor.getLong(COL_WEATHER_DATE)
-//                            ));
-//                }
-//                mPosition = position;
-//            }
-//        });
+                    ((Callback) getActivity())
+                            .onItemSelected(RestaurantContract.RestaurantEntry.buildRestaurantUri(position));
+                }
+                mPosition = position;
+            }
+        });
 
         // If there's instance state, mine it for useful information.
         // The end-goal here is that the user never knows that turning their device sideways

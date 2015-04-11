@@ -40,7 +40,7 @@ public class Utility {
         return prefs.getString(context.getString(R.string.pref_location_key),
                 context.getString(R.string.pref_location_default));
     }
-    private static final int IO_BUFFER_SIZE = 4 * 1024;
+    private static final int IO_BUFFER_SIZE = 800 * 600;
 
     /**
      * La fonction retourne la latitude
@@ -288,6 +288,9 @@ public class Utility {
 
             final byte[] data = dataStream.toByteArray();
             bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            int largeurImage = bitmap.getWidth();
+            int hauteurImage = bitmap.getHeight();
+            System.out.println("dimension de l'image : "+hauteurImage+" * " + largeurImage );
         } catch (IOException e) {
             System.out.println("Could not load Bitmap from: " + url);
         } finally {

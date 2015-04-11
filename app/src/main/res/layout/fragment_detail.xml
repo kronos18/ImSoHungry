@@ -6,7 +6,7 @@
     <LinearLayout
         android:gravity="center_vertical"
         android:layout_gravity="left"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:padding="16dp">
@@ -14,7 +14,7 @@
         <!-- Header: Day, Date -->
         <TextView
             android:fontFamily="sans-serif-condensed"
-            android:id="@+id/detail_day_textview"
+            android:id="@+id/detail_nomRestaurant"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:textColor="@color/black"
@@ -71,10 +71,11 @@
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:id="@+id/detail_forecast_textview"
+                    android:id="@+id/detail_descriptionRestaurant_textview"
+                    android:layout_marginTop="4dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/grey_700" />
             </LinearLayout>
         </LinearLayout>
@@ -88,24 +89,24 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/detail_humidity_textview"
+                android:id="@+id/detail_adresse_textview"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:textAppearance="?android:textAppearanceLarge" />
+                 />
 
             <TextView
-                android:id="@+id/detail_pressure_textview"
+                android:id="@+id/detail_ville_textview"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
-                android:textAppearance="?android:textAppearanceLarge" />
+                 />
 
             <TextView
-                android:id="@+id/detail_wind_textview"
+                android:id="@+id/detail_codeP_textview"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
-                android:textAppearance="?android:textAppearanceLarge" />
+                 />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

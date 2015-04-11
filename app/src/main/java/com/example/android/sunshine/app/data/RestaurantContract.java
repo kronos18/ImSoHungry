@@ -93,6 +93,7 @@ public class RestaurantContract {
 
         public static Uri buildRestaurantUri(long id)
         {
+            System.out.println("On est dans buildRestaurantUri est id vaut : "+id);
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
