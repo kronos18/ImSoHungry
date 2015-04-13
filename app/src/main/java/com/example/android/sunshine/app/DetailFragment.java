@@ -105,6 +105,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
+        setRetainInstance(true);
         System.out.println("On est dans onCreateView de DetailFragment");
         Bundle arguments = getArguments();
         if (arguments != null) {
@@ -113,14 +114,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         }
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        System.out.println("ma vue principal : " +rootView);
         mIconView = (ImageView) rootView.findViewById(R.id.detail_icon);
 //        mDateView = (TextView) rootView.findViewById(R.id.detail_date_textview);
         mNomRestaurantView = (TextView) rootView.findViewById(R.id.detail_nomRestaurant);
+        System.out.println("onCreateView --- mNomRestaurantView : " + mNomRestaurantView);
         mDescriptionView = (TextView) rootView.findViewById(R.id.detail_descriptionRestaurant_textview);
         mAdresseView = (TextView) rootView.findViewById(R.id.detail_adresse_textview);
         mVilleView = (TextView) rootView.findViewById(R.id.detail_ville_textview);
         mCodeView = (TextView) rootView.findViewById(R.id.detail_codeP_textview);
-
+//        this.setRetainInstance(true);
         System.out.println("On sort de onCreateView de DetailFragment");
         return rootView;
     }
@@ -191,7 +194,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor)
     {
         System.out.println("On est dans onLoadFinished ");
-        String id = mUri.getLastPathSegment();
+        String id;
+        id = mUri.getLastPathSegment();
         System.out.println("Le getlastPast : "+Integer.valueOf(id));
         if (cursor != null && cursor.moveToPosition(Integer.valueOf(id)))
         {
@@ -204,7 +208,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
             // Use weather art image
 //            mIconView.setImageResource(Utility.getImageRestaurant(restaurantId));
-
+            System.out.println("on recupere l'image");
             //on recupere l'image dans la bdd et on l'applique a iconView
             byte[] image = cursor.getBlob(IndexBDRestaurant.INDEX_IMAGE_FICHE);
             Bitmap imageBitmap = null;
@@ -213,6 +217,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
             }
             mIconView.setImageBitmap(imageBitmap);
+            System.out.println("on a affecte l'image");
 
 //            // Read date from cursor and update views for day of week and date
 //            long date = cursor.getLong(COL_WEATHER_DATE);
@@ -222,27 +227,42 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 //            mDateView.setText(dateText);
 
             String nomRestaurant = cursor.getString(IndexBDRestaurant.INDEX_NOM);
+            System.out.println("on a recupere le nom du restaurant qui est : "+nomRestaurant + " et mNomRestaurantView vaut "+mNomRestaurantView );
+            System.out.println("mDescriptionView vaut "+mDescriptionView );
+            System.out.println("mAdresseView vaut "+mAdresseView );
+            System.out.println("mVilleView vaut "+mVilleView );
+            System.out.println("mCodeView vaut "+mCodeView );
             mNomRestaurantView.setText(nomRestaurant);
+            System.out.println("============1111111===========");
             // on lit la description et on met a jour la vue
             String description = cursor.getString(IndexBDRestaurant.INDEX_DESCRIPTION);
             mDescriptionView.setText(description);
+            System.out.println("============22222222===========");
 
             mAdresseView.setText("Adresse : " +cursor.getString(IndexBDRestaurant.INDEX_ADRESSE));
+            System.out.println("============3333333===========");
             mVilleView.setText("Ville : " + cursor.getString(IndexBDRestaurant.INDEX_VILLE));
+            System.out.println("============4444444===========");
 
             mCodeView.setText("Code postal : " + cursor.getString(IndexBDRestaurant.INDEX_CODEPOSTAL));
+            System.out.println("============555555===========");
 
             // For accessibility, add a content description to the icon field
             mIconView.setContentDescription(description);
+            System.out.println("============6666666===========");
 
 
 
             // We still need this for the share intent
             mForecast = String.format("%s - %s", nomRestaurant, description);
+            System.out.println("============77777777===========");
 
             // If onCreateOptionsMenu has already happened, we need to update the share intent now.
             if (mShareActionProvider != null) {
+                System.out.println("dans le if");
                 mShareActionProvider.setShareIntent(createShareForecastIntent());
+                System.out.println("on sort du if");
+
             }
         }
         System.out.println("On sort onLoadFinished ");

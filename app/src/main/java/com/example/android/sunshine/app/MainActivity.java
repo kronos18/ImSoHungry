@@ -15,13 +15,16 @@
  */
 package com.example.android.sunshine.app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.android.sunshine.app.sync.LocalisationGPSListener;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 public class MainActivity extends ActionBarActivity implements RestaurantFragment.Callback {
@@ -32,12 +35,24 @@ public class MainActivity extends ActionBarActivity implements RestaurantFragmen
     private boolean mTwoPane;
     private String mLocation;
 
+    private LocationManager locationManager;
+    private LocalisationGPSListener localisationGPSListener;
+    private int temps = 5000; // milliseconds
+    private int distance = 10; // meters
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
+
         super.onCreate(savedInstanceState);
         mLocation = Utility.getPreferredLocation(this);
 
         setContentView(R.layout.activity_main);
+
+
+
+
         if (findViewById(R.id.weather_detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
@@ -59,8 +74,10 @@ public class MainActivity extends ActionBarActivity implements RestaurantFragmen
         RestaurantFragment restaurantFragment =  ((RestaurantFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_forecast));
 
-        SunshineSyncAdapter.initializeSyncAdapter(this);
+        SunshineSyncAdapter.initialisationDuSyncAdapter(this);
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -128,5 +145,20 @@ public class MainActivity extends ActionBarActivity implements RestaurantFragmen
                     .setData(contentUri);
             startActivity(intent);
         }
+    }
+
+
+    private void miseEnPlaceGeolocalisation() {
+        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        //*************ecouteur ou listener*********************
+        localisationGPSListener = new LocalisationGPSListener();
+
+        //on met a jour toute les 5 secondes et qu'on est bouge de 10m avant de recuperer les coordonnees a nouveau
+        locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                temps,
+                distance,
+                localisationGPSListener);
+
     }
 }

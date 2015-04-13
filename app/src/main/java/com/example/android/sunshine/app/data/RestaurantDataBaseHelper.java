@@ -27,7 +27,7 @@ import com.example.android.sunshine.app.data.RestaurantContract.RestaurantEntry;
 public class RestaurantDataBaseHelper extends SQLiteOpenHelper {
 
     // Pour mettre a jour la base de donnee, on change la version de la bdd
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
 
     static final String DATABASE_NAME = "restaurant.db";
 

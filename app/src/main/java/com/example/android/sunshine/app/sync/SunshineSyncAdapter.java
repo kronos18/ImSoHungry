@@ -47,6 +47,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
     // 60 seconds (1 minute) * 180 = 3 hours
     public static final int SYNC_INTERVAL = 60 * 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
+    private final Context monContext;
 
 
 
@@ -58,9 +59,38 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 //            RestaurantContract.RestaurantEntry.COLUMN_SHORT_DESC
     };
 
+    public double getLongitude() {
+        return longitude;
+    }
 
-    public SunshineSyncAdapter(Context context, boolean autoInitialize) {
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    private double longitude;
+    private double latitude;
+
+//    private final double latitudeGPS;
+//    private final double longitudeGPS;
+
+
+    public SunshineSyncAdapter(Context context, boolean autoInitialize)
+    {
         super(context, autoInitialize);
+        monContext = context;
+
+        //on recupere les donnees gps
+//        latitudeGPS = new LocalisationGPS().getLatitude();
+//        longitudeGPS = new LocalisationGPS().getLongitude();
+//        System.out.println("la latitude : "+latitudeGPS+" et la longitude : "+longitudeGPS);
     }
 
     /**
@@ -87,14 +117,20 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         String units = "metric";
         int numDays = 14;
 
+//        miseEnPlaceGeolocalisation();
+
+        latitude = 45.17901103;
+        longitude = 5.74019674;
+
+
         try {
             // Construct the URL for the sitra query
             // Possible parameters are avaiable at OWM's forecast API page, at
             // http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques?query={"projetId":"1143","apiKey":"m4VH2Zee","criteresQuery":"type:RESTAURATION","order":"DISTANCE","center":{"type":"Point","coordinates":%5B5.768291999999974,45.193761%5D},"radius":5000}
 
-            final String COORDONNE_PARAM = "5.768291999999974,45.193761";
-            final String RAYON_PARAM = "5000";
-            final String BASE_URL = "http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques?query={\"projetId\":\"1143\",\"apiKey\":\"m4VH2Zee\",\"criteresQuery\":\"type:RESTAURATION\",\"order\":\"DISTANCE\",\"center\":{\"type\":\"Point\",\"coordinates\":[5.768291999999974,45.193761]},\"radius\":5000}";
+            final String COORDONNE_PARAM = longitude+","+latitude;
+            final String RAYON_PARAM = "2000";
+            final String BASE_URL = "http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques?query={\"projetId\":\"1143\",\"apiKey\":\"m4VH2Zee\",\"criteresQuery\":\"type:RESTAURATION\",\"order\":\"DISTANCE\",\"center\":{\"type\":\"Point\",\"coordinates\":["+COORDONNE_PARAM+"]},\"radius\":5000}";
 
 //            Uri builtUri = Uri.parse(BASE_URL).buildUpon()
 //                    .appendQueryParameter(COORDONNE_PARAM, locationQuery)
@@ -355,7 +391,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 String longitude = coordonneeArray.getString(1);
 
 
-                System.out.println("La latitude : "+latitude+", la longitude : "+longitude);
+                //System.out.println("La latitude : "+latitude+", la longitude : "+longitude);
 
                 /*Recuperation de l'adresse, de la ville et du code postal du restaurant*/
                 JSONObject champsAdressejsonObject = tabResto.getJSONObject(LOCALISATION).getJSONObject(ADRESSE);
@@ -711,10 +747,13 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         syncImmediately(context);
     }
 
-    public static void initializeSyncAdapter(Context context) {
+    public static void initialisationDuSyncAdapter(Context context) {
         getSyncAccount(context);
 
 //        syncImmediately(context);
 
     }
+
+
+
 }

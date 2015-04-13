@@ -101,10 +101,14 @@ public class RestaurantFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
+        setRetainInstance(true);
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+
+
     }
 
     @Override
@@ -132,7 +136,8 @@ public class RestaurantFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             Bundle savedInstanceState)
+    {
         System.out.println("On est dans onCreateView");
         // The RestaurantAdaptateur will take data from a source and
         // use it to populate the ListView it's attached to.
