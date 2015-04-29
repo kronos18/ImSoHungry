@@ -370,8 +370,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 localisation = new Location("LocalisationRestaurant");
 
                 JSONArray coordonneeArray = tabResto.getJSONObject(LOCALISATION).getJSONObject(GEOLOCALISATION).getJSONObject(GEOJSON).getJSONArray(COORDONNEE_LIST);
-                String latitude = coordonneeArray.getString(0);
-                String longitude = coordonneeArray.getString(1);
+                String latitude = coordonneeArray.getString(1);
+                String longitude = coordonneeArray.getString(0);
 
 
                 //System.out.println("La latitude : "+latitude+", la longitude : "+longitude);
