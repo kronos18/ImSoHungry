@@ -31,6 +31,7 @@ public class LocalisationGPSListener implements LocationListener
         altitude = location.getAltitude();
         accuracy = location.getAccuracy();
         System.out.println("la latitude : " + latitude + " et la longitude : " + longitude);
+        SunshineSyncAdapter.miseAjourPositionCourante(location);
     }
 
     @Override
