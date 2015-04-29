@@ -1,10 +1,12 @@
 package com.example.android.sunshine.app;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -12,11 +14,17 @@ public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps2);
         setUpMapIfNeeded();
+
+        // Enabling MyLocation Layer of Google Map
+        mMap.setMyLocationEnabled(true);
+
     }
 
     @Override
@@ -66,9 +74,46 @@ public class MapsActivity extends FragmentActivity {
      */
     private void setUpMap() {
 
-        //Pour récupérer les latitudes et longitudes à partir d'une adresse,
-        //Il faut utiliser la Google Geocoding API : https://developers.google.com/maps/documentation/geocoding/
+        //Affiche un marker à la position 0,0
+        ShowMarkerAtPosition(new LatLng(0, 0), "Restaurant", "resume du restaurant");
 
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        //Affiche la position actuelle de l'utilisateur
+        ShowCircleAtPosition(new LatLng(0, 0));
+
+        //MyLocationOverlay currentLocation = new MyLocationOverlay(getApplicationContext(), //)
+    }
+
+    private void ShowMarkerAtPosition(LatLng position, String sNomRestaurant, String sResume)
+    {
+        MarkerOptions markerOption = new MarkerOptions();
+        markerOption.position(position);
+        markerOption.draggable(false);
+        markerOption.flat(false);//contre la carte ou face a la camero
+        markerOption.visible(true);
+
+        //Pour la bulle d'info du marker
+        markerOption.title(sNomRestaurant);
+        markerOption.snippet(sResume);
+
+        mMap.addMarker(markerOption);
+    }
+
+    private void ShowCircleAtPosition(LatLng position)
+    {
+        //Configure le cercle
+        CircleOptions circleOptions = new CircleOptions();
+        circleOptions.center(position);
+        circleOptions.radius(5000);
+        circleOptions.visible(true);
+
+        //interieur du cercle
+        circleOptions.fillColor(Color.BLUE);
+
+        //contour du cercle
+        circleOptions.strokeWidth(10);
+        circleOptions.strokeColor(Color.CYAN);
+
+        //Affiche le cercle
+        mMap.addCircle(circleOptions);
     }
 }
