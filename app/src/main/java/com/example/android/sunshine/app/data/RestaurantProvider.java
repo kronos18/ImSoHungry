@@ -22,6 +22,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import com.example.android.sunshine.app.RestaurantFragment;
+
 public class RestaurantProvider extends ContentProvider
 {
 
@@ -83,13 +85,24 @@ public class RestaurantProvider extends ContentProvider
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+
+        System.out.println("on est dans le delete de RestaurantProvider");
+        SQLiteDatabase db = baseDeDonnee.getWritableDatabase();
+        db.execSQL("DELETE FROM "+RestaurantContract.RestaurantEntry.TABLE_NAME); //delete all rows in a table
+//        db.close();
+        RestaurantFragment.mListView.refreshDrawableState();
+        return 1;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         //
         return 0;
+    }
+
+    public void deleteAll()
+    {
+
     }
 
     public void close()
@@ -393,8 +406,23 @@ public class RestaurantProvider extends ContentProvider
                     db.endTransaction();
                 }
                 getContext().getContentResolver().notifyChange(uri, null);
+                System.out.println("On rafraichit la listView 1");
+
+//                if (RestaurantFragment.restaurantAdapter != null) {
+//
+//                    RestaurantFragment.refreshData();
+//                }
+//
+//                RestaurantFragment.mListView.setAdapter(RestaurantFragment.restaurantAdapter);
+
                 return returnCount;
             default:
+//                System.out.println("On rafraichit la listView 2");
+//                if (RestaurantFragment.restaurantAdapter != null) {
+//                    RestaurantFragment.refreshData();
+//                }
+//
+//                RestaurantFragment.mListView.setAdapter(RestaurantFragment.restaurantAdapter);
                 return super.bulkInsert(uri, values);
         }
     }

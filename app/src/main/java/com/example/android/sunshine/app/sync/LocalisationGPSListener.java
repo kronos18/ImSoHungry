@@ -24,12 +24,13 @@ public class LocalisationGPSListener implements LocationListener
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(Location location)
+    {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         altitude = location.getAltitude();
         accuracy = location.getAccuracy();
-        System.out.println("la latitude : "+latitude+" et la longitude : "+longitude);
+        System.out.println("la latitude : " + latitude + " et la longitude : " + longitude);
     }
 
     @Override

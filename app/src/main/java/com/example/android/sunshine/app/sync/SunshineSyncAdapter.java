@@ -47,7 +47,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
     // 60 seconds (1 minute) * 180 = 3 hours
     public static final int SYNC_INTERVAL = 60 * 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
-    private final Context monContext;
 
 
 
@@ -58,6 +57,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 //            RestaurantContract.RestaurantEntry.COLUMN_MIN_TEMP,
 //            RestaurantContract.RestaurantEntry.COLUMN_SHORT_DESC
     };
+    private final Context mContext;
+
+    private double longitude;
+    private double latitude;
+
+
 
     public double getLongitude() {
         return longitude;
@@ -75,9 +80,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         this.latitude = latitude;
     }
 
-    private double longitude;
-    private double latitude;
-
 //    private final double latitudeGPS;
 //    private final double longitudeGPS;
 
@@ -85,12 +87,22 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
     public SunshineSyncAdapter(Context context, boolean autoInitialize)
     {
         super(context, autoInitialize);
-        monContext = context;
+        this.mContext = context;
 
+        System.out.println("On est dans le constructeur de sunshineSmyncAdapter");
+//        if (location != null) {
+////            this.latitude = location.getLatitude();
+////            this.longitude = location.getLongitude();
+//
+//        }
+//        else
+//            System.out.println("Il n'y a pas de derniere localisation connue");
+        this.latitude= 5.768291999999974;
+        this.longitude = 45.193761 ;
         //on recupere les donnees gps
 //        latitudeGPS = new LocalisationGPS().getLatitude();
 //        longitudeGPS = new LocalisationGPS().getLongitude();
-//        System.out.println("la latitude : "+latitudeGPS+" et la longitude : "+longitudeGPS);
+        System.out.println("la latitude : "+this.latitude+" et la longitude : "+this.longitude);
     }
 
     /**
@@ -103,7 +115,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
      */
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting sync");
-        String locationQuery = Utility.getPreferredLocation(getContext());
+        String locationQuery = Utility.getPreferenceRayon(getContext());
         System.out.println("La location de la requete est : "+locationQuery);
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -119,18 +131,25 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 
 //        miseEnPlaceGeolocalisation();
 
-        latitude = 45.17901103;
-        longitude = 5.74019674;
 
-
+//        if ((latitude == Double.parseDouble(null)) || (longitude == Double.parseDouble(null)))
+//        {
+//            try {
+//                wait();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
         try {
             // Construct the URL for the sitra query
             // Possible parameters are avaiable at OWM's forecast API page, at
             // http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques?query={"projetId":"1143","apiKey":"m4VH2Zee","criteresQuery":"type:RESTAURATION","order":"DISTANCE","center":{"type":"Point","coordinates":%5B5.768291999999974,45.193761%5D},"radius":5000}
 
-            final String COORDONNE_PARAM = longitude+","+latitude;
-            final String RAYON_PARAM = "2000";
-            final String BASE_URL = "http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques?query={\"projetId\":\"1143\",\"apiKey\":\"m4VH2Zee\",\"criteresQuery\":\"type:RESTAURATION\",\"order\":\"DISTANCE\",\"center\":{\"type\":\"Point\",\"coordinates\":["+COORDONNE_PARAM+"]},\"radius\":5000}";
+            final String COORDONNE_PARAM = this.latitude+","+this.longitude;
+//            final String RAYON_PARAM = "5000";
+//            on recupere le rayon choisit, ou par defaut
+            final String RAYON_PARAM = Utility.getPreferenceRayon(getContext());
+            final String BASE_URL = "http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques?query={\"projetId\":\"1143\",\"apiKey\":\"m4VH2Zee\",\"criteresQuery\":\"type:RESTAURATION\",\"order\":\"DISTANCE\",\"center\":{\"type\":\"Point\",\"coordinates\":["+COORDONNE_PARAM+"]},\"radius\":"+RAYON_PARAM+"}";
 
 //            Uri builtUri = Uri.parse(BASE_URL).buildUpon()
 //                    .appendQueryParameter(COORDONNE_PARAM, locationQuery)
@@ -149,6 +168,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
             System.out.println("On est connecte");
+
             // Read the input stream into a String
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
@@ -413,6 +433,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 imageListeByte = getImagesBytesFromUrl(urlListImage, imageListeByte);
                 imageFicheByte = getImagesBytesFromUrl(urlImage, imageFicheByte);
 
+
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_RESTAURANT_ID, idRestaurant);
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_NAME, nomRestaurant);
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_ADRESSE, adresseRestaurant);
@@ -424,16 +445,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_IMAGE_FICHE,imageFicheByte );
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_LATITUDE,latitude);
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_LONGITUDE,longitude);
-//                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION, descriptifRestaurant);
-//                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DATE, dateTime);
-//                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_HUMIDITY, humidity);
-//                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_PRESSURE, pressure);
-//                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_WIND_SPEED, windSpeed);
-//                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_DEGREES, windDirection);
-//                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_MAX_TEMP, high);
-//                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_MIN_TEMP, low);
-//                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_SHORT_DESC, description);
-//                restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_RESTAURANT_ID, weatherId);
 
                 cVVector.add(restaurantValues);
             }
@@ -444,9 +455,15 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 
             // add to database
             Uri dataBaseRestaurantUri = RestaurantContract.RestaurantEntry.CONTENT_URI;
-            if ( cVVector.size() > 0 ) {
+            if ( cVVector.size() > 0 )
+            {
                 ContentValues[] cvArray = new ContentValues[cVVector.size()];
                 cVVector.toArray(cvArray);
+                System.out.println("On supprime les lignes dans la bdd");
+                getContext().getContentResolver().delete(dataBaseRestaurantUri,null,null);
+                System.out.println("Row supprimer. Insertion ");
+
+//  getContext().getContentResolver().delete(dataBaseRestaurantUri,"all",new String[2] );
                 getContext().getContentResolver().bulkInsert(dataBaseRestaurantUri, cvArray);
 
                 // delete old data so we don't build up an endless history
@@ -543,7 +560,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 //
 //            if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS) {
 //                // Last sync was more than 1 day ago, let's send a notification with the weather.
-//                String locationQuery = Utility.getPreferredLocation(context);
+//                String locationQuery = Utility.getPreferenceRayon(context);
 //
 //                Uri weatherUri = RestaurantContract.RestaurantEntry.buildWeatherLocationWithDate(locationQuery, System.currentTimeMillis());
 //

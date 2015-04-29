@@ -41,9 +41,9 @@ import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
  */
 public class RestaurantFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String LOG_TAG = RestaurantFragment.class.getSimpleName();
-    private RestaurantAdaptateur restaurantAdapter;
+    public static RestaurantAdaptateur restaurantAdapter;
 
-    private ListView mListView;
+    public static ListView mListView;
     private int mPosition = ListView.INVALID_POSITION;
     private boolean mUseTodayLayout;
 
@@ -84,6 +84,7 @@ public class RestaurantFragment extends Fragment implements LoaderManager.Loader
 //    static final int COL_WEATHER_CONDITION_ID = 6;
     static final int COL_COORD_LAT = 3;
     static final int COL_COORD_LONG = 4;
+    private RestaurantFragment lecontext;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -168,7 +169,7 @@ public class RestaurantFragment extends Fragment implements LoaderManager.Loader
                 if (cursor != null)
                 {
 
-//                    String locationSetting = Utility.getPreferredLocation(getActivity());
+//                    String locationSetting = Utility.getPreferenceRayon(getActivity());
                     ((Callback) getActivity())
                             .onItemSelected(RestaurantContract.RestaurantEntry.buildRestaurantUri(position));
                 }
@@ -206,8 +207,10 @@ public class RestaurantFragment extends Fragment implements LoaderManager.Loader
     }
 
     // since we read the location when we create the loader, all we need to do is restart things
-    void onLocationChanged( ) {
+    void onLocationChanged( )
+    {
         updateWeather();
+
         getLoaderManager().restartLoader(RESTAURANT_LOADER, null, this);
     }
 
@@ -270,7 +273,7 @@ public class RestaurantFragment extends Fragment implements LoaderManager.Loader
         // Sort order:  Ascending, by id.
         String sortOrder = RestaurantContract.RestaurantEntry._ID + " ASC";
 
-        String locationSetting = Utility.getPreferredLocation(getActivity());
+        String locationSetting = Utility.getPreferenceRayon(getActivity());
         Uri restaurantUri = RestaurantContract.RestaurantEntry.CONTENT_URI;
         System.out.println("l'uri est : "+restaurantUri);
 
@@ -298,5 +301,12 @@ public class RestaurantFragment extends Fragment implements LoaderManager.Loader
     public void onLoaderReset(Loader<Cursor> loader) {
         restaurantAdapter.swapCursor(null);
     }
+
+    public static void refreshData()
+    {
+        System.out.println("J'appelle la fonction refreshData");
+        restaurantAdapter.notifyDataSetChanged();
+    }
+
 
 }

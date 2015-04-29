@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,14 +40,15 @@ public class MainActivity extends ActionBarActivity implements RestaurantFragmen
     private LocalisationGPSListener localisationGPSListener;
     private int temps = 5000; // milliseconds
     private int distance = 10; // meters
-
+    public RestaurantFragment restaurantFragment;
+    final Handler myHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
 
         super.onCreate(savedInstanceState);
-        mLocation = Utility.getPreferredLocation(this);
+        mLocation = Utility.getPreferenceRayon(this);
 
         setContentView(R.layout.activity_main);
 
@@ -71,7 +73,7 @@ public class MainActivity extends ActionBarActivity implements RestaurantFragmen
             getSupportActionBar().setElevation(0f);
         }
 
-        RestaurantFragment restaurantFragment =  ((RestaurantFragment)getSupportFragmentManager()
+        this.restaurantFragment =  ((RestaurantFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_forecast));
 
         SunshineSyncAdapter.initialisationDuSyncAdapter(this);
@@ -110,7 +112,7 @@ public class MainActivity extends ActionBarActivity implements RestaurantFragmen
     @Override
     protected void onResume() {
         super.onResume();
-        String location = Utility.getPreferredLocation( this );
+        String location = Utility.getPreferenceRayon(this);
         // update the location in our second pane using the fragment manager
             if (location != null && !location.equals(mLocation)) {
             RestaurantFragment ff = (RestaurantFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
@@ -160,5 +162,15 @@ public class MainActivity extends ActionBarActivity implements RestaurantFragmen
                 distance,
                 localisationGPSListener);
 
+    }
+
+    public void refresh() {
+        runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run() {
+                restaurantFragment.refreshData();
+            }
+        });
     }
 }
