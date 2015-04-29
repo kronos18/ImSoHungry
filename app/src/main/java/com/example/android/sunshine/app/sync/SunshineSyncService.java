@@ -16,6 +16,7 @@ public class SunshineSyncService extends Service {
     private LocalisationGPSListener localisationGPSListener;
     private int temps = 5000; // milliseconds
     private int distance = 10; // meters
+    private Location derniereLocation;
 
 
     @Override
@@ -29,21 +30,24 @@ public class SunshineSyncService extends Service {
             if (sSunshineSyncAdapter == null)
             {
 //                recuperation du manager de localisation
-//                locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-//                //*************ecouteur ou listener*********************
-//                localisationGPSListener = new LocalisationGPSListener();
-//
-//                Location derniereLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//
-//                //on met a jour toute les 5 secondes et qu'on est bouge de 10m avant de recuperer les coordonnees a nouveau
-//                locationManager.requestLocationUpdates(
-//                        LocationManager.GPS_PROVIDER,
-//                        temps,
-//                        distance,
-//                        localisationGPSListener);
+                locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                //*************ecouteur ou listener*********************
+                localisationGPSListener = new LocalisationGPSListener();
+
+                this.derniereLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                //on met a jour toute les 5 secondes et qu'on est bouge de 10m avant de recuperer les coordonnees a nouveau
+                locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        temps,
+                        distance,
+                        localisationGPSListener);
 
 //                quand on le demande, on recupere la derniere localisation et on met a jour
-//                System.out.println("Derniere localisation connue :" +derniereLocation.toString());
+                System.out.println("Derniere localisation connue :" +derniereLocation.toString());
+//                on met a jour la derniere localisation
+                SunshineSyncAdapter.miseAjourPositionCourante(derniereLocation);
+
                 sSunshineSyncAdapter = new SunshineSyncAdapter(getApplicationContext(), true);
             }
         }

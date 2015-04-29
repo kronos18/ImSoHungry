@@ -61,7 +61,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 
     private double longitude;
     private double latitude;
-
+    public static Location location;
 
 
     public double getLongitude() {
@@ -90,15 +90,18 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         this.mContext = context;
 
         System.out.println("On est dans le constructeur de sunshineSmyncAdapter");
-//        if (location != null) {
-////            this.latitude = location.getLatitude();
-////            this.longitude = location.getLongitude();
-//
-//        }
-//        else
-//            System.out.println("Il n'y a pas de derniere localisation connue");
-        this.latitude= 5.768291999999974;
-        this.longitude = 45.193761 ;
+        if (location != null)
+        {
+
+            this.latitude = location.getLatitude();
+            this.longitude = location.getLongitude();
+
+        }
+        else {
+            System.out.println("Il n'y a pas de derniere localisation connue, donc valeur par defaut");
+            this.latitude = 5.768291999999974;
+            this.longitude = 45.193761;
+        }
         //on recupere les donnees gps
 //        latitudeGPS = new LocalisationGPS().getLatitude();
 //        longitudeGPS = new LocalisationGPS().getLongitude();
@@ -145,20 +148,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
             // Possible parameters are avaiable at OWM's forecast API page, at
             // http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques?query={"projetId":"1143","apiKey":"m4VH2Zee","criteresQuery":"type:RESTAURATION","order":"DISTANCE","center":{"type":"Point","coordinates":%5B5.768291999999974,45.193761%5D},"radius":5000}
 
-            final String COORDONNE_PARAM = this.latitude+","+this.longitude;
+            final String COORDONNE_PARAM = this.longitude+","+this.latitude;
 //            final String RAYON_PARAM = "5000";
 //            on recupere le rayon choisit, ou par defaut
             final String RAYON_PARAM = Utility.getPreferenceRayon(getContext());
             final String BASE_URL = "http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques?query={\"projetId\":\"1143\",\"apiKey\":\"m4VH2Zee\",\"criteresQuery\":\"type:RESTAURATION\",\"order\":\"DISTANCE\",\"center\":{\"type\":\"Point\",\"coordinates\":["+COORDONNE_PARAM+"]},\"radius\":"+RAYON_PARAM+"}";
 
-//            Uri builtUri = Uri.parse(BASE_URL).buildUpon()
-//                    .appendQueryParameter(COORDONNE_PARAM, locationQuery)
-//                    .appendQueryParameter(RAYON_PARAM, format)
-//                    .appendQueryParameter(UNITS_PARAM, units)
-//                    .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
-//                    .build();
-
-//            URL url = new URL(builtUri.toString());
 
             URL url = new URL(BASE_URL);
             System.out.println("L'url est :\n"+url);
@@ -229,38 +224,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                                            String locationSetting)
             throws JSONException {
 
-        System.out.println("On est dans la fonction");
+        System.out.println("On est dans la fonction ");
+        System.out.println("La localisation est " + location.getLatitude()+", "+location.getLongitude());
 
         // Now we have a String representing the complete forecast in JSON Format.
         // Fortunately parsing is easy:  constructor takes the JSON string and converts it
         // into an Object hierarchy for us.
 
-        // These are the names of the JSON objects that need to be extracted.
 
-        // Location information
-//        final String OWM_CITY = "city";
-//        final String OWM_CITY_NAME = "name";
-//        final String OWM_COORD = "coord";
-//
-//        // Location coordinate
-//        final String OWM_LATITUDE = "lat";
-//        final String OWM_LONGITUDE = "lon";
-//
-//        // Weather information.  Each day's forecast info is an element of the "list" array.
-//        final String RESTAURANT_LIST = "list";
-//
-//        final String OWM_PRESSURE = "pressure";
-//        final String OWM_HUMIDITY = "humidity";
-//        final String OWM_WINDSPEED = "speed";
-//        final String OWM_WIND_DIRECTION = "deg";
-//
-//        // All temperatures are children of the "temp" object.
-//        final String OWM_TEMPERATURE = "temp";
-//        final String OWM_MAX = "max";
-//        final String OWM_MIN = "min";
-//
-//        final String OWM_WEATHER = "weather";
-//        final String OWM_DESCRIPTION = "main";
         final String RESTAURANT_LIST = "objetsTouristiques";
         final String ILLUSTRATION_LIST = "illustrations";
         final String COMMUNICATION_LIST = "moyensCommunication";
@@ -292,14 +263,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
             JSONObject objetTouristiqueJson = new JSONObject(forecastJsonStr);
             JSONArray restaurantArray = objetTouristiqueJson.getJSONArray(RESTAURANT_LIST);
 
-//            JSONObject cityJson = objetTouristiqueJson.getJSONObject(OWM_CITY);
-//            String cityName = cityJson.getString(OWM_CITY_NAME);
-//
-//            JSONObject cityCoord = cityJson.getJSONObject(OWM_COORD);
-//            double cityLatitude = cityCoord.getDouble(OWM_LATITUDE);
-//            double cityLongitude = cityCoord.getDouble(OWM_LONGITUDE);
-//
-//            long locationId = addLocation(locationSetting, cityName, cityLatitude, cityLongitude);
 
             // Insert the new weather information into the database
             Vector<ContentValues> cVVector = new Vector<ContentValues>(restaurantArray.length());
@@ -498,6 +461,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 System.out.println("nb de ligne : " + restaurantCursor.getCount());
             }
             restaurantCursor.close();
+
 //            System.out.println("nom");
 //            System.out.println("-----------");
 ////            on affiche toutes les valeurs inserer
@@ -771,6 +735,13 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 
     }
 
+    public static void miseAjourPositionCourante(Location location2)
+    {
+//        latitude = location.getLatitude();
+//        longitude = location.getLongitude();
 
+        location = location2;
+
+    }
 
 }
