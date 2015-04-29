@@ -85,6 +85,13 @@
                 android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
                  />
+
+            <TextView
+                android:id="@+id/detail_tel_textview"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_width="match_parent"
+                 />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

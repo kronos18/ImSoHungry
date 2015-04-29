@@ -8,9 +8,9 @@ import android.location.LocationManager;
 import android.os.IBinder;
 import android.util.Log;
 
-public class SunshineSyncService extends Service {
+public class SyncService extends Service {
     private static final Object sSyncAdapterLock = new Object();
-    private static SunshineSyncAdapter sSunshineSyncAdapter = null;
+    private static SyncAdapter sSyncAdapter = null;
 
     private LocationManager locationManager;
     private LocalisationGPSListener localisationGPSListener;
@@ -27,7 +27,7 @@ public class SunshineSyncService extends Service {
         synchronized (sSyncAdapterLock)
         {
 //            si on n'a pas de sync adapter, on en cree un
-            if (sSunshineSyncAdapter == null)
+            if (sSyncAdapter == null)
             {
 //                recuperation du manager de localisation
                 locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -46,16 +46,16 @@ public class SunshineSyncService extends Service {
 //                quand on le demande, on recupere la derniere localisation et on met a jour
                 System.out.println("Derniere localisation connue :" +derniereLocation.toString());
 //                on met a jour la derniere localisation
-                SunshineSyncAdapter.miseAjourPositionCourante(derniereLocation);
+                SyncAdapter.miseAjourPositionCourante(derniereLocation);
 
-                sSunshineSyncAdapter = new SunshineSyncAdapter(getApplicationContext(), true);
+                sSyncAdapter = new SyncAdapter(getApplicationContext(), true);
             }
         }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return sSunshineSyncAdapter.getSyncAdapterBinder();
+        return sSyncAdapter.getSyncAdapterBinder();
     }
 
 

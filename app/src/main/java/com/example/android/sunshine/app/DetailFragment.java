@@ -68,9 +68,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             RestaurantContract.RestaurantEntry.COLUMN_CODEPOSTAL,
             RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION,
             RestaurantContract.RestaurantEntry.COLUMN_IMG_LIST,
-            RestaurantContract.RestaurantEntry.COLUMN_IMAGE_FICHE
-//            RestaurantContract.RestaurantEntry.COLUMN_LATITUDE,
-//            RestaurantContract.RestaurantEntry.COLUMN_LONGITUDE
+            RestaurantContract.RestaurantEntry.COLUMN_IMAGE_FICHE,
+            RestaurantContract.RestaurantEntry.COLUMN_LATITUDE,
+            RestaurantContract.RestaurantEntry.COLUMN_LONGITUDE,
+            RestaurantContract.RestaurantEntry.COLUMN_TELEPHONE
+
+
     };
 
     // These indices are tied to DETAIL_COLUMNS.  If DETAIL_COLUMNS changes, these
@@ -95,7 +98,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private TextView mHumidityView;
     private TextView mWindView;
     private TextView mPressureView;
-    private TextView mNomRestaurantView;
+    private TextView mNomRestaurantView,mTelephoneView;
 
     public DetailFragment() {
         setHasOptionsMenu(true);
@@ -123,6 +126,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mAdresseView = (TextView) rootView.findViewById(R.id.detail_adresse_textview);
         mVilleView = (TextView) rootView.findViewById(R.id.detail_ville_textview);
         mCodeView = (TextView) rootView.findViewById(R.id.detail_codeP_textview);
+        mTelephoneView = (TextView) rootView.findViewById(R.id.detail_tel_textview);
 //        this.setRetainInstance(true);
         System.out.println("On sort de onCreateView de DetailFragment");
         return rootView;
@@ -245,6 +249,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             System.out.println("============4444444===========");
 
             mCodeView.setText("Code postal : " + cursor.getString(IndexBDRestaurant.INDEX_CODEPOSTAL));
+            mCodeView.setText("Telephone : " + cursor.getString(IndexBDRestaurant.INDEX_TEL));
             System.out.println("============555555===========");
 
             // For accessibility, add a content description to the icon field

@@ -34,7 +34,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.sunshine.app.data.RestaurantContract;
-import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
+import com.example.android.sunshine.app.sync.SyncAdapter;
 
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
@@ -217,7 +217,7 @@ public class RestaurantFragment extends Fragment implements LoaderManager.Loader
     private void updateWeather()
     {
         System.out.println("On est dans updateWeather");
-        SunshineSyncAdapter.syncImmediately(getActivity());
+        SyncAdapter.syncImmediately(getActivity());
         System.out.println("On sort updateWeather");
     }
 

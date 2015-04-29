@@ -12,14 +12,14 @@
          By convention, "action" denotes that this String will be used as the label for an Action,
          typically from the action bar.  The ActionBar is limited real estate, so shorter is better.
     -->
-    <string name="action_settings">Settings</string>
-    <string name="action_map">Map Location</string>
-    <string name="action_share">Share</string>
+    <string name="action_settings">Préférences</string>
+    <string name="action_map">Localisation sur Google Map</string>
+    <string name="action_share">Partager</string>
 
     <!-- Menu label to fetch updated weather info from the server -->
     <string name="action_refresh" translatable="false">Refresh</string>
-    <string name="title_activity_detail">Details</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_detail">Descriptif</string>
+    <string name="title_activity_settings">Préférences</string>
 
     <!-- Label for the radius preference [CHAR LIMIT=30] -->
     <string name="pref_location_label">Rayon</string>

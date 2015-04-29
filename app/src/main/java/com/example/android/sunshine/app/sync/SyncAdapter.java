@@ -37,12 +37,12 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.Vector;
 
-public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
+public class SyncAdapter extends AbstractThreadedSyncAdapter
 {
 
 
 
-    public final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
+    public final String LOG_TAG = SyncAdapter.class.getSimpleName();
     // Interval at which to sync with the weather, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
     public static final int SYNC_INTERVAL = 60 * 180;
@@ -84,7 +84,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 //    private final double longitudeGPS;
 
 
-    public SunshineSyncAdapter(Context context, boolean autoInitialize)
+    public SyncAdapter(Context context, boolean autoInitialize)
     {
         super(context, autoInitialize);
         this.mContext = context;
@@ -346,7 +346,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                     //on ajoute le moyen de commu a la liste
                     moyenCommunicationListe.add(monMoyenDeCommunication);
 
-                    System.out.println(typeMoyenCommunication+" :  " + coordonneesMoyenCommunication+"\n");
+                    System.out.println("moyen de communication : " + typeMoyenCommunication+" :  " + coordonneesMoyenCommunication+"\n");
 
                 }
 
@@ -408,6 +408,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_IMAGE_FICHE,imageFicheByte );
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_LATITUDE,latitude);
                 restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_LONGITUDE,longitude);
+                for (int j = 0; j < moyenCommunicationListe.size(); j++) {
+                    if (moyenCommunicationListe.get(j).getType().equals("Téléphone"))
+                    {
+                        System.out.println("on est dans le si et la valeur vaut :"+moyenCommunicationListe.get(j).getContenu());
+                        restaurantValues.put(RestaurantContract.RestaurantEntry.COLUMN_TELEPHONE,moyenCommunicationListe.get(j).getContenu());
+
+                    }
+                }
 
                 cVVector.add(restaurantValues);
             }
@@ -715,7 +723,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         /*
          * Since we've created an account
          */
-        SunshineSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
+        SyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
 
         /*
          * Without calling setSyncAutomatically, our periodic sync will not be enabled.

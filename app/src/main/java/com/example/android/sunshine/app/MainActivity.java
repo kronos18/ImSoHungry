@@ -26,7 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.android.sunshine.app.sync.LocalisationGPSListener;
-import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
+import com.example.android.sunshine.app.sync.SyncAdapter;
 
 public class MainActivity extends ActionBarActivity implements RestaurantFragment.Callback {
 
@@ -76,7 +76,7 @@ public class MainActivity extends ActionBarActivity implements RestaurantFragmen
         this.restaurantFragment =  ((RestaurantFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_forecast));
 
-        SunshineSyncAdapter.initialisationDuSyncAdapter(this);
+        SyncAdapter.initialisationDuSyncAdapter(this);
     }
 
 
