@@ -37,7 +37,8 @@ public class MapsActivity extends FragmentActivity  implements LoaderManager.Loa
             RestaurantContract.RestaurantEntry.COLUMN_IMG_LIST,
             RestaurantContract.RestaurantEntry.COLUMN_IMAGE_FICHE,
             RestaurantContract.RestaurantEntry.COLUMN_LATITUDE,
-            RestaurantContract.RestaurantEntry.COLUMN_LONGITUDE
+            RestaurantContract.RestaurantEntry.COLUMN_LONGITUDE,
+            RestaurantContract.RestaurantEntry.COLUMN_TELEPHONE
     };
 
     @Override
@@ -165,6 +166,7 @@ public class MapsActivity extends FragmentActivity  implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor)
     {
+        System.out.println("On est dans le onLoadFinished");
         int locationCount = 0;
         String nom = "";
         String description = "";
@@ -176,12 +178,14 @@ public class MapsActivity extends FragmentActivity  implements LoaderManager.Loa
         if (currentLocation != null) {
             Double currentLatitude = currentLocation.getLatitude();
             Double currentLongitude = currentLocation.getLongitude();
-            if (currentLatitude != null && currentLongitude != null)
+            if (currentLatitude != null && currentLongitude != null) {
                 ShowCircleAtPosition(new LatLng(currentLatitude, currentLongitude));
+            }
         }
 
-        if (cursor == null)
+        if (cursor == null) {
             return;
+        }
 
         // Number of locations available in the SQLite database table
         locationCount = cursor.getCount();
@@ -211,6 +215,7 @@ public class MapsActivity extends FragmentActivity  implements LoaderManager.Loa
             // Setting the zoom level in the map on last position  is clicked
             mMap.animateCamera(CameraUpdateFactory.zoomTo(0));
         }
+        System.out.println("On sort du onLoadFinished");
     }
 
     @Override
