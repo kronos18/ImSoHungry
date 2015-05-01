@@ -173,4 +173,82 @@ public class MainActivity extends ActionBarActivity implements RestaurantFragmen
             }
         });
     }
+
+
+    /*
+    *****************AZADEH********************
+     */
+//    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+//
+//        Uri restaurantUri = RestaurantContract.RestaurantEntry.CONTENT_URI;
+//        System.out.println("l'uri est : "+restaurantUri);
+//
+//
+//        return new CursorLoader(this,
+//                restaurantUri,
+//                RestaurantFragment.RESTAURANT_COLUMNS,
+//                null,
+//                null,
+//                null);
+//
+//    }
+//
+//    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+//        //  LocationManager lm=(LocationManager) getSystemService(LOCATION_SERVICE);
+//        //  Intent i= new Intent("com.alert.proximityalert");           //Custom Action
+//        //  PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(), -1, i, 0);
+//
+//
+//        data.moveToFirst();
+//        //   i.putExtra("name", data.getString(1));
+//        //   i.putExtra("address", data.getString(2));
+//        createNotification(data.getString(1), data.getString(2),R.mipmap.ic_launcher);
+//
+//        // float radius = 30000;
+//      /* while (data.moveToNext()) {
+//            Toast.makeText(this, "lon  = "+data.getInt(8)+" - "+"lat  = "+data.getInt(9), Toast.LENGTH_SHORT).show();
+//            double lat=data.getInt(9);
+//           double lon=data.getInt(8);
+//           lm.addProximityAlert(lat,lon,radius, -1, pi);
+//
+//        }*/
+//
+//
+//        // this.sendBroadcast(i);
+//
+//
+//
+//        //lm.addProximityAlert(45.1936541,5.7684217,radius, -1, pi);
+//
+//    }
+//
+//
+//
+//
+//    public void onLoaderReset(Loader<Cursor> loader) {
+//
+//    }
+//    //*********************************************************************
+//    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+//    public void createNotification(String name, String address,int icon) {
+//        // Prepare intent which is triggered if the
+//        // notification is selected
+//
+//        Intent intent = new Intent(this,this.getClass());
+//        PendingIntent pIntent = PendingIntent.getActivity(this,0, intent, 0);
+//
+//        // Build notification
+//        // Actions are just fake
+//        Notification noti = new Notification.Builder(this)
+//                .setContentTitle(name)
+//                .setContentText(address).setSmallIcon(icon)
+//                .setContentIntent(pIntent).build();
+//
+//        NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+//        // hide the notification after its selected
+//        noti.flags |= Notification.FLAG_AUTO_CANCEL;
+//
+//        notificationManager.notify(0, noti);
+////****************************************************************************
+//    }
 }

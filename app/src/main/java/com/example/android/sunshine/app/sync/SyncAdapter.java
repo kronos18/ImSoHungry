@@ -2,14 +2,18 @@ package com.example.android.sunshine.app.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -17,11 +21,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
+import com.example.android.sunshine.app.MainActivity;
 import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.RestaurantFragment;
 import com.example.android.sunshine.app.Utility;
+import com.example.android.sunshine.app.data.IndexBDRestaurant;
 import com.example.android.sunshine.app.data.RestaurantContract;
 
 import org.json.JSONArray;
@@ -48,11 +56,20 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
     public static final int SYNC_INTERVAL = 60 * 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 
+    //creation de la variable pour definir le nombre de milliseconde qu'il y a en un jour
+    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 
-
+    private static final int WEATHER_NOTIFICATION_ID = 3004;
 
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
-            RestaurantContract.RestaurantEntry.COLUMN_RESTAURANT_ID,
+            RestaurantContract.RestaurantEntry.TABLE_NAME + "." + RestaurantContract.RestaurantEntry._ID,
+            RestaurantContract.RestaurantEntry.COLUMN_NAME,
+            RestaurantContract.RestaurantEntry.COLUMN_ADRESSE,
+            RestaurantContract.RestaurantEntry.COLUMN_VILLE,
+            RestaurantContract.RestaurantEntry.COLUMN_CODEPOSTAL,
+            RestaurantContract.RestaurantEntry.COLUMN_DESCRIPTION,
+            RestaurantContract.RestaurantEntry.COLUMN_IMG_LIST,
+            RestaurantContract.RestaurantEntry.COLUMN_IMAGE_FICHE
 //            RestaurantContract.RestaurantEntry.COLUMN_MAX_TEMP,
 //            RestaurantContract.RestaurantEntry.COLUMN_MIN_TEMP,
 //            RestaurantContract.RestaurantEntry.COLUMN_SHORT_DESC
@@ -437,6 +454,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
 //  getContext().getContentResolver().delete(dataBaseRestaurantUri,"all",new String[2] );
                 getContext().getContentResolver().bulkInsert(dataBaseRestaurantUri, cvArray);
 
+                //on lance la notification apres insertion dans la base de donnee
+                notifyWeather();
                 // delete old data so we don't build up an endless history
 //                getContext().getContentResolver().delete(RestaurantContract.RestaurantEntry.CONTENT_URI,
 //                        RestaurantContract.RestaurantEntry.COLUMN_DATE + " <= ?",
@@ -527,74 +546,96 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
         if ( displayNotifications )
         {
 
-//            String lastNotificationKey = context.getString(R.string.pref_last_notification);
-//            long lastSync = prefs.getLong(lastNotificationKey, 0);
-//
-//            if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS) {
-//                // Last sync was more than 1 day ago, let's send a notification with the weather.
-//                String locationQuery = Utility.getPreferenceRayon(context);
-//
-//                Uri weatherUri = RestaurantContract.RestaurantEntry.buildWeatherLocationWithDate(locationQuery, System.currentTimeMillis());
-//
-//                // we'll query our contentProvider, as always
-//                Cursor cursor = context.getContentResolver().query(weatherUri, NOTIFY_WEATHER_PROJECTION, null, null, null);
-//
-//                if (cursor.moveToFirst()) {
-//                    int weatherId = cursor.getInt(INDEX_WEATHER_ID);
-//                    double high = cursor.getDouble(INDEX_MAX_TEMP);
-//                    double low = cursor.getDouble(INDEX_MIN_TEMP);
-//                    String desc = cursor.getString(INDEX_SHORT_DESC);
-//
-//                    int iconId = Utility.getIconResourceForWeatherCondition(weatherId);
-//                    Resources resources = context.getResources();
-//                    Bitmap largeIcon = BitmapFactory.decodeResource(resources,
-//                            Utility.getImageRestaurant(weatherId));
-//                    String title = context.getString(R.string.app_name);
-//
-//                    // Define the text of the forecast.
+            String lastNotificationKey = context.getString(R.string.pref_last_notification);
+            long lastSync = prefs.getLong(lastNotificationKey, 0);
+
+//            if (System.currentTimeMillis() - lastSync >= 1000) {
+                // Last sync was more than 1 day ago, let's send a notification with the weather.
+                String locationQuery = Utility.getPreferenceRayon(context);
+
+                Uri restaurantUri = RestaurantContract.RestaurantEntry.CONTENT_URI;
+
+                // we'll query our contentProvider, as always
+                Cursor cursor = context.getContentResolver().query(restaurantUri, NOTIFY_WEATHER_PROJECTION, null, null, null);
+
+                if (cursor.moveToFirst()) {
+                    int restaurantId = cursor.getInt(IndexBDRestaurant.INDEX_RESTAURANT_ID);
+                    double high = cursor.getDouble(IndexBDRestaurant.INDEX_NOM);
+//                    double low = cursor.getDouble(IndexBDRestaurant.INDEX_RESTAURANT);
+                    String desc = cursor.getString(IndexBDRestaurant.INDEX_DESCRIPTION);
+                    String nom = cursor.getString(IndexBDRestaurant.INDEX_NOM);
+
+//                    int iconId = Utility.getIconResourceForWeatherCondition(restaurantId);
+                    Resources resources = context.getResources();
+
+
+
+
+                    String title = context.getString(R.string.app_name);
+
+                    // Define the text of the restaurant.
+                    String contentText = "Restaurant le plus proche : "+nom+" \n";
+                    System.out.println("test notif : "+contentText);
 //                    String contentText = String.format(context.getString(R.string.format_notification),
-//                            desc,
-//                            Utility.formatTemperature(context, high),
-//                            Utility.formatTemperature(context, low));
-//
-//                    // NotificationCompatBuilder is a very convenient way to build backward-compatible
-//                    // notifications.  Just throw in some data.
-//                    NotificationCompat.Builder mBuilder =
-//                            new NotificationCompat.Builder(getContext())
-//                                    .setColor(resources.getColor(R.color.sunshine_light_blue))
-//                                    .setSmallIcon(iconId)
-//                                    .setLargeIcon(largeIcon)
-//                                    .setContentTitle(title)
-//                                    .setContentText(contentText);
-//
-//                    // Make something interesting happen when the user clicks on the notification.
-//                    // In this case, opening the app is sufficient.
-//                    Intent resultIntent = new Intent(context, MainActivity.class);
-//
-//                    // The stack builder object will contain an artificial back stack for the
-//                    // started Activity.
-//                    // This ensures that navigating backward from the Activity leads out of
-//                    // your application to the Home screen.
-//                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-//                    stackBuilder.addNextIntent(resultIntent);
-//                    PendingIntent resultPendingIntent =
-//                            stackBuilder.getPendingIntent(
-//                                    0,
-//                                    PendingIntent.FLAG_UPDATE_CURRENT
-//                            );
-//                    mBuilder.setContentIntent(resultPendingIntent);
-//
-//                    NotificationManager mNotificationManager =
-//                            (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-//                    // WEATHER_NOTIFICATION_ID allows you to update the notification later on.
-//                    mNotificationManager.notify(WEATHER_NOTIFICATION_ID, mBuilder.build());
-//
-//                    //refreshing last sync
-//                    SharedPreferences.Editor editor = prefs.edit();
-//                    editor.putLong(lastNotificationKey, System.currentTimeMillis());
-//                    editor.commit();
-//                }
-//                cursor.close();
+//                            restaurantId,desc;
+
+                    NotificationCompat.Builder mBuilder = null;
+
+                    byte[] image = cursor.getBlob(IndexBDRestaurant.INDEX_IMAGE_LISTE);
+                    Bitmap largeIcon = null;
+                    if (image != null) {
+                        largeIcon = Utility.getImage(image);
+                        mBuilder =
+                                new NotificationCompat.Builder(getContext())
+                                        .setColor(resources.getColor(R.color.sunshine_light_blue))
+                                        .setSmallIcon(R.mipmap.ic_launcher)
+                                    .setLargeIcon(largeIcon)
+                                        .setContentTitle(title)
+                                        .setContentText(contentText);
+
+                    }
+                    else
+                    {
+                        // NotificationCompatBuilder is a very convenient way to build backward-compatible
+                        // notifications.  Just throw in some data.
+                        mBuilder =
+                                new NotificationCompat.Builder(getContext())
+                                        .setColor(resources.getColor(R.color.sunshine_light_blue))
+                                        .setSmallIcon(R.mipmap.ic_launcher)
+                                        .setLargeIcon(largeIcon)
+                                        .setContentTitle(title)
+                                        .setContentText(contentText);
+                    }
+                    // Make something interesting happen when the user clicks on the notification.
+                    // In this case, opening the app is sufficient.
+                    Intent resultIntent = new Intent(context, MainActivity.class);
+
+//                    System.out.println("cest egual : "+ MainActivity.class.equals(getContext()));
+                    // The stack builder object will contain an artificial back stack for the
+                    // started Activity.
+                    // This ensures that navigating backward from the Activity leads out of
+                    // your application to the Home screen.
+                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                    stackBuilder.addNextIntent(resultIntent);
+                    PendingIntent resultPendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+                    mBuilder.setContentIntent(resultPendingIntent);
+
+                    NotificationManager mNotificationManager =
+                            (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    // WEATHER_NOTIFICATION_ID allows you to update the notification later on.
+
+                    mNotificationManager.notify(0, mBuilder.build());
+
+                    //refreshing last sync
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putLong(lastNotificationKey, System.currentTimeMillis());
+                    editor.commit();
+                }
+                cursor.close();
 //            }
         }
     }
