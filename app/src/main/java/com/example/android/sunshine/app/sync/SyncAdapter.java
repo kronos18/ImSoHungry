@@ -587,8 +587,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                         largeIcon = Utility.getImage(image);
                         mBuilder =
                                 new NotificationCompat.Builder(getContext())
-                                        .setColor(resources.getColor(R.color.sunshine_light_blue))
-                                        .setSmallIcon(R.mipmap.ic_launcher)
+                                        .setColor(resources.getColor(R.color.white))
+                                        .setSmallIcon(R.mipmap.ic_logo)
                                     .setLargeIcon(largeIcon)
                                         .setContentTitle(title)
                                         .setContentText(contentText);
@@ -600,8 +600,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                         // notifications.  Just throw in some data.
                         mBuilder =
                                 new NotificationCompat.Builder(getContext())
-                                        .setColor(resources.getColor(R.color.sunshine_light_blue))
-                                        .setSmallIcon(R.mipmap.ic_launcher)
+                                        .setColor(resources.getColor(R.color.white))
+                                        .setSmallIcon(R.mipmap.ic_logo)
                                         .setLargeIcon(largeIcon)
                                         .setContentTitle(title)
                                         .setContentText(contentText);
