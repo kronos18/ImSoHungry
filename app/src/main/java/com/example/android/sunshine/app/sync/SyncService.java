@@ -34,7 +34,7 @@ public class SyncService extends Service {
                 //*************ecouteur ou listener*********************
                 localisationGPSListener = new LocalisationGPSListener();
 
-                this.derniereLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                derniereLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 //on met a jour toute les 5 secondes et qu'on est bouge de 10m avant de recuperer les coordonnees a nouveau
                 locationManager.requestLocationUpdates(
@@ -44,7 +44,7 @@ public class SyncService extends Service {
                         localisationGPSListener);
 
 //                quand on le demande, on recupere la derniere localisation et on met a jour
-                System.out.println("Derniere localisation connue :" +derniereLocation.toString());
+                //System.out.println("Derniere localisation connue :" +derniereLocation.toString());
 //                on met a jour la derniere localisation
                 SyncAdapter.miseAjourPositionCourante(derniereLocation);
 

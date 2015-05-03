@@ -242,7 +242,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             throws JSONException {
 
         System.out.println("On est dans la fonction ");
-        System.out.println("La localisation est " + location.getLatitude()+", "+location.getLongitude());
+        //System.out.println("La localisation est " + location.getLatitude()+", "+location.getLongitude());
 
         // Now we have a String representing the complete forecast in JSON Format.
         // Fortunately parsing is easy:  constructor takes the JSON string and converts it

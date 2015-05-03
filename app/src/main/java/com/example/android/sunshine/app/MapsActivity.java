@@ -1,6 +1,7 @@
 package com.example.android.sunshine.app;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
@@ -112,7 +113,7 @@ public class MapsActivity extends FragmentActivity  implements LoaderManager.Loa
     private void setUpMap() {
     }
 
-    private void ShowMarkerAtPosition(LatLng position, String sNomRestaurant, String sResume)
+    private void ShowMarkerAtPosition(LatLng position, String sNomRestaurant, String sResume, Bitmap imageBitmap)
     {
         MarkerOptions markerOption = new MarkerOptions();
         markerOption.position(position);
@@ -122,6 +123,7 @@ public class MapsActivity extends FragmentActivity  implements LoaderManager.Loa
 
         //Pour la bulle d'info du marker
         markerOption.title(sNomRestaurant);
+//        markerOption.icon(BitmapDescriptorFactory.fromBitmap(imageBitmap));
         markerOption.snippet(sResume);
 
         mMap.addMarker(markerOption);
@@ -173,6 +175,10 @@ public class MapsActivity extends FragmentActivity  implements LoaderManager.Loa
         Double latitude = 0.0;
         Double longitude = 0.0;
 
+        //recuperation de l'image du restaurant
+        Bitmap imageBitmap = null;
+
+
         //Affiche un cercle autour de la position actuelle
         Location currentLocation = mMap.getMyLocation();
         if (currentLocation != null) {
@@ -200,9 +206,14 @@ public class MapsActivity extends FragmentActivity  implements LoaderManager.Loa
             description = cursor.getString(IndexBDRestaurant.INDEX_DESCRIPTION);
             latitude = cursor.getDouble(IndexBDRestaurant.INDEX_LATITUDE);
             longitude = cursor.getDouble(IndexBDRestaurant.INDEX_LONGITUDE);
-
+            //pour l'image
+//            byte[] image = cursor.getBlob(IndexBDRestaurant.INDEX_IMAGE_LISTE);
+//            if (image != null) {
+//                imageBitmap = Utility.getImage(image);
+//
+//            }
             // Drawing the marker in the Google Maps
-            ShowMarkerAtPosition(new LatLng(latitude, longitude), nom, description);
+            ShowMarkerAtPosition(new LatLng(latitude, longitude), nom, description,imageBitmap);
 
             // Traverse the pointer to the next row
             cursor.moveToNext();
