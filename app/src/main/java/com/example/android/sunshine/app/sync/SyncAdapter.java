@@ -116,8 +116,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
         }
         else {
             System.out.println("Il n'y a pas de derniere localisation connue, donc valeur par defaut");
-            this.latitude = 5.768291999999974;
-            this.longitude = 45.193761;
+            this.longitude = 5.768291999999974;
+            this.latitude = 45.193761;
         }
         //on recupere les donnees gps
 //        latitudeGPS = new LocalisationGPS().getLatitude();
