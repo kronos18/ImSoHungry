@@ -1,16 +1,20 @@
-Sunshine
-========
+Projet : I’m so hungry
+======================
 
-Sunshine is the companion Android app for the Udacity course [Developing Android Apps: Android Fundamentals](https://www.udacity.com/course/ud853).
+Objectif du projet :
+====================
 
-Take the course to find out how to build this app a step at a time, and eventually create your own Android App!
+Développer une application Android, avec la base Sunshine, permettant de lister les restaurants les plus proches de la position actuelle de l’utilisateur.
 
-This is the second version of the Sunshine code. The repository has been updated on:
 
-* **February 13th, 2015** - Major update
-* February 25, 2015 - Minor bug fixes
-* March 4th, 2015 - Minor bug fixes
+Contraintes :
+-------------
+Loader framework du coté mobile (lesson 4c),
+SyncAdapter framework du coté cloud (lesson 6),
+Notifications framework (lesson 6),
+Api Sitra
 
-For the original version, please go [here](https://github.com/udacity/Sunshine).
 
-A changelog for the course can be found [here](https://docs.google.com/a/knowlabs.com/document/d/193xJb_OpcNCqgquMhxPrMh05IEYFXQqt0S6-6YK8gBw/pub).
+Explications :
+==============
+	Toute personne s’est déjà retrouvée dans une situation où la faim se fait ressentir mais ne sait pas où se restaurer. L’application ImSoHungry est là pour palier à ce problème. Dorénavant, lorsque l’envie de manger se fait ressentir, l’utilisateur n’a plus qu’à utiliser l’application. Celle-ci va référencer les restaurants les plus proches de sa position dans un certain rayon de kilomètre. Elle proposera les détails et la description du restaurant choisi par l’utilisateur. Et si l’utilisateur ne dispose pas de connexion internet, elle gardera en mémoire les restaurants trouvés lors du précèdent résultat. Le but de cette application est de permettre une restauration rapide.
